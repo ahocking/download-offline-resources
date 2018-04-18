@@ -1,0 +1,370 @@
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+resources:
+- name: stemcell-pivnet-3541.8
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: stemcells
+    product_version: 3541\.8$
+    sort_by: semver
+
+- name: stemcell-pivnet-3468.25
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: stemcells
+    product_version: 3468\.25$
+    sort_by: semver
+
+- name: stemcell-pivnet-3541.9
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: stemcells
+    product_version: 3541\.9$
+    sort_by: semver
+
+- name: stemcell-pivnet-3445.30
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: stemcells
+    product_version: 3445\.30$
+    sort_by: semver
+
+- name: stemcell-pivnet-3445.29
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: stemcells
+    product_version: 3445\.29$
+    sort_by: semver
+
+- name: stemcell-pivnet-3445.28
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: stemcells
+    product_version: 3445\.28$
+    sort_by: semver
+
+- name: ops-manager-pivnet-2-0
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: ops-manager
+    product_version: {{opsman_major_minor_version_2_0}}
+    sort_by: semver
+
+- name: elastic-runtime-pivnet-2-0
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: elastic-runtime
+    product_version: {{ert_major_minor_version_2_0}}
+    sort_by: semver
+
+- name: ops-manager-pivnet-2-1
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: ops-manager
+    product_version: {{opsman_major_minor_version_2_1}}
+    sort_by: semver
+
+- name: elastic-runtime-pivnet-2-1
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: elastic-runtime
+    product_version: {{ert_major_minor_version_2_1}}
+    sort_by: semver
+
+#- name: isolation-segment-pivnet
+#  type: pivnet
+#  source:
+#    api_token: {{pivnet_token}}
+#    product_slug: p-isolation-segment
+#    product_version: {{isolation_segment_major_minor_version}}
+#    sort_by: semver
+#
+#- name: redis-pivnet
+#  type: pivnet
+#  source:
+#    api_token: {{pivnet_token}}
+#    product_slug: p-redis
+#    product_version: {{redis_major_minor_version}}
+#    sort_by: semver
+#
+#- name: rabbitmq-pivnet
+#  type: pivnet
+#  source:
+#    api_token: {{pivnet_token}}
+#    product_slug: p-rabbitmq
+#    product_version: {{rabbitmq_major_minor_version}}
+#    sort_by: semver
+
+
+- name: ops-manager-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "ops-manager/ops-manager-(.*).tgz"
+
+- name: elastic-runtime-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "elastic-runtime/elastic-runtime-(.*).tgz"
+
+#- name: isolation-segment-s3
+#  type: s3
+#  source:
+#    access_key_id: {{s3_access_key_id}}
+#    secret_access_key: {{s3_secret_access_key}}
+#    endpoint: {{s3_endpoint}}
+#    bucket: {{s3_bucket}}
+#    regexp: "p-isolation-segment/p-isolation-segment-(.*).tgz"
+#
+#- name: redis-s3
+#  type: s3
+#  source:
+#    access_key_id: {{s3_access_key_id}}
+#    secret_access_key: {{s3_secret_access_key}}
+#    endpoint: {{s3_endpoint}}
+#    bucket: {{s3_bucket}}
+#    regexp: "p-redis/p-redis-(.*).tgz"
+
+- name: stemcell-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "stemcells/bosh-stemcell-(.*)-.*.tgz"
+    disable_ssl: false
+
+jobs:
+- name: stemcell-3541.8
+  plan:
+  - get: stemcell-pivnet
+    resource: stemcell-pivnet-3541.8
+    trigger: true
+    params:
+      globs: ["*vsphere*"]
+  - put: stemcell-s3
+    get_params: {skip_download: true}
+    params:
+      file: "stemcell-pivnet/*.tgz"
+
+- name: stemcell-3468.25
+  plan:
+  - get: stemcell-pivnet
+    resource: stemcell-pivnet-3468.25
+    trigger: true
+    params:
+      globs: ["*vsphere*"]
+  - put: stemcell-s3
+    get_params: {skip_download: true}
+    params:
+      file: "stemcell-pivnet/*.tgz"
+
+- name: stemcell-3541.9
+  plan:
+  - get: stemcell-pivnet
+    resource: stemcell-pivnet-3541.9
+    trigger: true
+    params:
+      globs: ["*vsphere*"]
+  - put: stemcell-s3
+    get_params: {skip_download: true}
+    params:
+      file: "stemcell-pivnet/*.tgz"
+
+- name: stemcell-3445.30
+  plan:
+  - get: stemcell-pivnet
+    resource: stemcell-pivnet-3445.30
+    trigger: true
+    params:
+      globs: ["*vsphere*"]
+  - put: stemcell-s3
+    get_params: {skip_download: true}
+    params:
+      file: "stemcell-pivnet/*.tgz"
+
+- name: stemcell-3445.29
+  plan:
+  - get: stemcell-pivnet
+    resource: stemcell-pivnet-3445.29
+    trigger: true
+    params:
+      globs: ["*vsphere*"]
+  - put: stemcell-s3
+    get_params: {skip_download: true}
+    params:
+      file: "stemcell-pivnet/*.tgz"
+
+- name: stemcell-3445.28
+  plan:
+  - get: stemcell-pivnet
+    resource: stemcell-pivnet-3445.28
+    trigger: true
+    params:
+      globs: ["*vsphere*"]
+  - put: stemcell-s3
+    get_params: {skip_download: true}
+    params:
+      file: "stemcell-pivnet/*.tgz"
+
+
+
+- name: ops-manager-2-0
+  plan:
+  - get: ops-manager-pivnet
+    resource: ops-manager-pivnet-2-0
+    trigger: true
+    params:
+      globs: ["*.ova"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: ops-manager-pivnet
+      outputs:
+      - name: ops-manager-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat ops-manager-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "ops-manager-tarball/ops-manager-${version}.tgz" -C ops-manager-pivnet .
+  - put: ops-manager-s3
+    get_params: {skip_download: true}
+    params:
+      file: "ops-manager-tarball/ops-manager-*.tgz"
+
+- name: ops-manager-2-1
+  plan:
+  - get: ops-manager-pivnet
+    resource: ops-manager-pivnet-2-1
+    trigger: true
+    params:
+      globs: ["*.ova"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: ops-manager-pivnet
+      outputs:
+      - name: ops-manager-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat ops-manager-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "ops-manager-tarball/ops-manager-${version}.tgz" -C ops-manager-pivnet .
+  - put: ops-manager-s3
+    get_params: {skip_download: true}
+    params:
+      file: "ops-manager-tarball/ops-manager-*.tgz"
+
+
+- name: elastic-runtime-2-0
+  plan:
+  - get: elastic-runtime-pivnet
+    resource: elastic-runtime-pivnet-2-0
+    trigger: true
+    params:
+      globs: ["*.pivotal"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: elastic-runtime-pivnet
+      outputs:
+      - name: elastic-runtime-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat elastic-runtime-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "elastic-runtime-tarball/elastic-runtime-${version}.tgz" -C elastic-runtime-pivnet .
+  - put: elastic-runtime-s3
+    get_params: {skip_download: true}
+    params:
+      file: "elastic-runtime-tarball/elastic-runtime-*.tgz"
+
+- name: elastic-runtime-2-1
+  plan:
+  - get: elastic-runtime-pivnet
+    resource: elastic-runtime-pivnet-2-1
+    trigger: true
+    params:
+      globs: ["*.pivotal"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: elastic-runtime-pivnet
+      outputs:
+      - name: elastic-runtime-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat elastic-runtime-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "elastic-runtime-tarball/elastic-runtime-${version}.tgz" -C elastic-runtime-pivnet .
+  - put: elastic-runtime-s3
+    get_params: {skip_download: true}
+    params:
+      file: "elastic-runtime-tarball/elastic-runtime-*.tgz"
