@@ -44,10 +44,8 @@ jobs:
         globs:
         - "bosh-stemcell-3445.30-*.tgz"
     - get: pivnet-product
-      resource: pivnet-product
       params:
-        globs:
-        - "*.pivotal"
+        unpack: true
       trigger: true
 
   - task: upload-tile
@@ -202,7 +200,7 @@ jobs:
         globs:
         - "*.pivotal"
       passed: [config-product]
-      trigger: true
+      trigger: false
 
   - task: disable-errands
     file: pipelines-repo/tasks/disable-errands/task.yml

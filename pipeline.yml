@@ -94,6 +94,14 @@ resources:
     product_version: {{isolation_segment_major_minor_version}}
     sort_by: semver
 
+- name: mysql-pivnet
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: p-mysql
+    product_version: {{mysql_major_minor_version}}
+    sort_by: semver
+
 # - name: redis-pivnet
 #  type: pivnet
 #  source:
@@ -137,6 +145,16 @@ resources:
     endpoint: {{s3_endpoint}}
     bucket: {{s3_bucket}}
     regexp: "p-isolation-segment/p-isolation-segment-(.*).tgz"
+
+- name: mysql-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "p-mysql/p-mysql-(.*).tgz"
+
 
 #- name: redis-s3
 #  type: s3
@@ -400,3 +418,37 @@ jobs:
     get_params: {skip_download: true}
     params:
       file: "isolation-segment-tarball/p-isolation-segment-*.tgz"
+
+- name: mysql
+  plan:
+  - get: mysql-pivnet
+    resource: mysql-pivnet
+    trigger: true
+    params:
+      globs: ["*.pivotal"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: mysql-pivnet
+      outputs:
+      - name: mysql-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat mysql-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "mysql-tarball/p-mysql-${version}.tgz" -C mysql-pivnet .
+  - put: mysql-s3
+    get_params: {skip_download: true}
+    params:
+      file: "mysql-tarball/p-mysql-*.tgz"
