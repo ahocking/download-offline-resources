@@ -22,7 +22,7 @@ params:
 inputs:
   - name: pivnet-product
   - name: pipelines-repo
-  - name: stemcell
+  - name: stemcells
 
 run:
   path: pipelines-repo/tasks/upload-stemcell/task.sh

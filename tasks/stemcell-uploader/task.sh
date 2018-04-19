@@ -62,7 +62,7 @@ if [ -n "$STEMCELL_VERSION" ]; then
 #    pivnet-cli login --api-token="$PIVNET_API_TOKEN"
 #    pivnet-cli download-product-files -p "$product_slug" -r $STEMCELL_VERSION -g "*${IAAS}*" --accept-eula
 
-    SC_FILE_PATH=`find ./stemcell/ -name *.tgz`
+    SC_FILE_PATH=`find ./stemcells/ -name *.tgz`
 
     if [ ! -f "$SC_FILE_PATH" ]; then
       echo "Stemcell file not found!"

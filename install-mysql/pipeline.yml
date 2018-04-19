@@ -38,6 +38,11 @@ jobs:
   plan:
   - aggregate:
     - get: pipelines-repo
+    - get: stemcells
+      resource: stemcell-s3
+      params:
+        globs:
+        - "bosh-stemcell-3445.30-*.tgz"
     - get: pivnet-product
       resource: pivnet-product
       params:
