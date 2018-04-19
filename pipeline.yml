@@ -86,15 +86,15 @@ resources:
     product_version: {{ert_major_minor_version_2_1}}
     sort_by: semver
 
-#- name: isolation-segment-pivnet
-#  type: pivnet
-#  source:
-#    api_token: {{pivnet_token}}
-#    product_slug: p-isolation-segment
-#    product_version: {{isolation_segment_major_minor_version}}
-#    sort_by: semver
-#
-#- name: redis-pivnet
+- name: isolation-segment-pivnet-2-1-1
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: p-isolation-segment
+    product_version: {{isolation_segment_major_minor_version}}
+    sort_by: semver
+
+# - name: redis-pivnet
 #  type: pivnet
 #  source:
 #    api_token: {{pivnet_token}}
@@ -102,14 +102,14 @@ resources:
 #    product_version: {{redis_major_minor_version}}
 #    sort_by: semver
 #
-#- name: rabbitmq-pivnet
+# - name: rabbitmq-pivnet
 #  type: pivnet
 #  source:
 #    api_token: {{pivnet_token}}
 #    product_slug: p-rabbitmq
 #    product_version: {{rabbitmq_major_minor_version}}
 #    sort_by: semver
-
+#
 
 - name: ops-manager-s3
   type: s3
@@ -129,15 +129,15 @@ resources:
     bucket: {{s3_bucket}}
     regexp: "elastic-runtime/elastic-runtime-(.*).tgz"
 
-#- name: isolation-segment-s3
-#  type: s3
-#  source:
-#    access_key_id: {{s3_access_key_id}}
-#    secret_access_key: {{s3_secret_access_key}}
-#    endpoint: {{s3_endpoint}}
-#    bucket: {{s3_bucket}}
-#    regexp: "p-isolation-segment/p-isolation-segment-(.*).tgz"
-#
+- name: isolation-segment-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "p-isolation-segment/p-isolation-segment-(.*).tgz"
+
 #- name: redis-s3
 #  type: s3
 #  source:
@@ -229,8 +229,6 @@ jobs:
     get_params: {skip_download: true}
     params:
       file: "stemcell-pivnet/*.tgz"
-
-
 
 - name: ops-manager-2-0
   plan:
@@ -368,3 +366,37 @@ jobs:
     get_params: {skip_download: true}
     params:
       file: "elastic-runtime-tarball/elastic-runtime-*.tgz"
+
+- name: isolation-segment-2-1-1
+  plan:
+  - get: isolation-segment-pivnet
+    resource: isolation-segment-pivnet-2-1-1
+    trigger: true
+    params:
+      globs: ["*.pivotal"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: isolation-segment-pivnet
+      outputs:
+      - name: isolation-segment-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat isolation-segment-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "isolation-segment-tarball/p-isolation-segment-${version}.tgz" -C isolation-segment-pivnet .
+  - put: isolation-segment-s3
+    get_params: {skip_download: true}
+    params:
+      file: "isolation-segment-tarball/p-isolation-segment-*.tgz"
