@@ -6,15 +6,7 @@ resource_types:
     tag: latest-final
 
 resources:
-- name: stemcell-pivnet-3541.8
-  type: pivnet
-  source:
-    api_token: {{pivnet_token}}
-    product_slug: stemcells
-    product_version: 3541\.8$
-    sort_by: semver
-
-- name: stemcell-pivnet-3468.25
+- name: stemcell-pivnet-3468
   type: pivnet
   source:
     api_token: {{pivnet_token}}
@@ -22,7 +14,7 @@ resources:
     product_version: 3468\.25$
     sort_by: semver
 
-- name: stemcell-pivnet-3541.9
+- name: stemcell-pivnet-3541
   type: pivnet
   source:
     api_token: {{pivnet_token}}
@@ -30,28 +22,12 @@ resources:
     product_version: 3541\.9$
     sort_by: semver
 
-- name: stemcell-pivnet-3445.30
+- name: stemcell-pivnet-3445
   type: pivnet
   source:
     api_token: {{pivnet_token}}
     product_slug: stemcells
     product_version: 3445\.30$
-    sort_by: semver
-
-- name: stemcell-pivnet-3445.29
-  type: pivnet
-  source:
-    api_token: {{pivnet_token}}
-    product_slug: stemcells
-    product_version: 3445\.29$
-    sort_by: semver
-
-- name: stemcell-pivnet-3445.28
-  type: pivnet
-  source:
-    api_token: {{pivnet_token}}
-    product_slug: stemcells
-    product_version: 3445\.28$
     sort_by: semver
 
 - name: ops-manager-pivnet-2-0
@@ -165,85 +141,69 @@ resources:
 #    bucket: {{s3_bucket}}
 #    regexp: "p-redis/p-redis-(.*).tgz"
 
-- name: stemcell-s3
+- name: stemcell-3468-s3
   type: s3
   source:
     access_key_id: {{s3_access_key_id}}
     secret_access_key: {{s3_secret_access_key}}
     endpoint: {{s3_endpoint}}
     bucket: {{s3_bucket}}
-    regexp: "stemcells/bosh-stemcell-(.*)-.*.tgz"
+    regexp: "stemcells/3468/bosh-stemcell-(.*)-.*.tgz"
+    disable_ssl: false
+
+- name: stemcell-3541-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "stemcells/3541/bosh-stemcell-(.*)-.*.tgz"
+    disable_ssl: false
+
+- name: stemcell-3445-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "stemcells/3445/bosh-stemcell-(.*)-.*.tgz"
     disable_ssl: false
 
 jobs:
-- name: stemcell-3541.8
+- name: stemcell-3468
   plan:
   - get: stemcell-pivnet
-    resource: stemcell-pivnet-3541.8
+    resource: stemcell-pivnet-3468
     trigger: true
     params:
       globs: ["*vsphere*"]
-  - put: stemcell-s3
+  - put: stemcell-3468-s3
     get_params: {skip_download: true}
     params:
       file: "stemcell-pivnet/*.tgz"
 
-- name: stemcell-3468.25
+- name: stemcell-3541
   plan:
   - get: stemcell-pivnet
-    resource: stemcell-pivnet-3468.25
+    resource: stemcell-pivnet-3541
     trigger: true
     params:
       globs: ["*vsphere*"]
-  - put: stemcell-s3
+  - put: stemcell-3541-s3
     get_params: {skip_download: true}
     params:
       file: "stemcell-pivnet/*.tgz"
 
-- name: stemcell-3541.9
+- name: stemcell-3445
   plan:
   - get: stemcell-pivnet
-    resource: stemcell-pivnet-3541.9
+    resource: stemcell-pivnet-3445
     trigger: true
     params:
       globs: ["*vsphere*"]
-  - put: stemcell-s3
-    get_params: {skip_download: true}
-    params:
-      file: "stemcell-pivnet/*.tgz"
-
-- name: stemcell-3445.30
-  plan:
-  - get: stemcell-pivnet
-    resource: stemcell-pivnet-3445.30
-    trigger: true
-    params:
-      globs: ["*vsphere*"]
-  - put: stemcell-s3
-    get_params: {skip_download: true}
-    params:
-      file: "stemcell-pivnet/*.tgz"
-
-- name: stemcell-3445.29
-  plan:
-  - get: stemcell-pivnet
-    resource: stemcell-pivnet-3445.29
-    trigger: true
-    params:
-      globs: ["*vsphere*"]
-  - put: stemcell-s3
-    get_params: {skip_download: true}
-    params:
-      file: "stemcell-pivnet/*.tgz"
-
-- name: stemcell-3445.28
-  plan:
-  - get: stemcell-pivnet
-    resource: stemcell-pivnet-3445.28
-    trigger: true
-    params:
-      globs: ["*vsphere*"]
-  - put: stemcell-s3
+  - put: stemcell-3445-s3
     get_params: {skip_download: true}
     params:
       file: "stemcell-pivnet/*.tgz"

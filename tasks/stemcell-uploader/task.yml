@@ -25,4 +25,4 @@ inputs:
   - name: stemcells
 
 run:
-  path: pipelines-repo/tasks/upload-stemcell/task.sh
+  path: pipelines-repo/tasks/stemcell-uploader/task.sh

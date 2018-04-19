@@ -4,6 +4,7 @@ github_repo: https://github.com/rahul-kj/pcf-concourse-pipelines # [R] Pipelines
 github_branch: master
 
 product_s3_regex: "p-msql/p-mysql.(.*).tgz"
+stemcell_s3_regexp: "stemcells/3445/bosh-stemcell-(.*)-.*.tgz"
 
 iaas_type: vsphere
 

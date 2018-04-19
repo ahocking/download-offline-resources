@@ -30,7 +30,7 @@ resources:
     secret_access_key: {{s3_secret_access_key}}
     endpoint: {{s3_endpoint}}
     bucket: {{s3_bucket}}
-    regexp: "stemcells/bosh-stemcell-(.*)-.*.tgz"
+    regexp: {{stemcell_s3_regexp}}
     disable_ssl: false
 
 jobs:
@@ -42,7 +42,7 @@ jobs:
       resource: stemcell-s3
       params:
         globs:
-        - "bosh-stemcell-3445.30-*.tgz"
+        - "*.tgz"
     - get: pivnet-product
       params:
         unpack: true
