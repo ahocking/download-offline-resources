@@ -75,6 +75,7 @@ jobs:
     - get: pivnet-product
       resource: pivnet-product
       params:
+        unpack: true
         globs:
         - "*.pivotal"
       passed: [upload-product]
@@ -96,6 +97,7 @@ jobs:
     - get: pivnet-product
       resource: pivnet-product
       params:
+        unpack: true
         globs:
         - "*.pivotal"
       passed: [stage-product]
@@ -197,6 +199,7 @@ jobs:
     - get: pivnet-product
       resource: pivnet-product
       params:
+        unpack: true
         globs:
         - "*.pivotal"
       passed: [config-product]
@@ -220,6 +223,7 @@ jobs:
     - get: pivnet-product
       resource: pivnet-product
       params:
+        unpack: true
         globs:
         - "*.pivotal"
       passed: [disable-errands]
