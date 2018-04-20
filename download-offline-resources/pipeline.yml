@@ -828,7 +828,7 @@ jobs:
 
 - name: crunchy-postgresql
   plan:
-  - get: crunchy-postgresql
+  - get: crunchy-postgresql-pivnet
     resource: crunchy-postgresql-pivnet
     trigger: true
     params:
