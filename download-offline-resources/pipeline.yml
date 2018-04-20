@@ -4,7 +4,7 @@ groups:
   jobs: [ops-manager-2-0, ops-manager-2-1, elastic-runtime-2-0, elastic-runtime-2-1]
 
 - name: Service Tiles
-  jobs: [isolation-segment, mysql, mysqlv2, rabbitmq, spring-cloud-services, redis, healthwatch]
+  jobs: [isolation-segment, mysql, mysqlv2, rabbitmq, spring-cloud-services, redis, healthwatch, minio, credhub-service-broker, mongodb-enterprise-service, crunchy-postgresql]
 
 - name: Stemcells
   jobs: [stemcell-3468, stemcell-3541, stemcell-3445]
@@ -130,6 +130,36 @@ resources:
     product_version: {{healthwatch_major_minor_version}}
     sort_by: semver
 
+- name: minio-pivnet
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: minio
+    product_version: {{minio_major_minor_version}}
+    sort_by: semver
+
+- name: credhub-service-broker-pivnet
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: credhub-service-broker
+    product_version: {{credhub-service-broker_major_minor_version}}
+    sort_by: semver
+
+- name: mongodb-enterprise-service-pivnet
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: mongodb-enterprise-service
+    product_version: {{mongodb-enterprise-service_major_minor_version}}
+
+- name: crunchy-postgresql-pivnet
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: crunchy-postgresql
+    product_version: {{crunchy-postgresql_major_minor_version}}
+
 #S3 resources for Pivotal Products
 - name: ops-manager-s3
   type: s3
@@ -212,6 +242,43 @@ resources:
     bucket: {{s3_bucket}}
     regexp: "p-spring-cloud-services/p-spring-cloud-services-(.*).tgz"
 
+- name: minio-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "minio/minio-(.*).tgz"
+
+- name: credhub-service-broker-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "credhub-service-broker/credhub-service-broker-(.*).tgz"
+
+- name: mongodb-enterprise-service-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "mongodb-enterprise-service/mongodb-enterprise-service-(.*).tgz"
+
+- name: crunchy-postgresql-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "crunchy-postgresql/crunchy-postgresql-(.*).tgz"
+
+#stemcells
 - name: stemcell-3468-s3
   type: s3
   source:
@@ -244,7 +311,6 @@ resources:
 
 
 #jobs to download resources from pivnet and upload to s3 object storage
-
 jobs:
 - name: stemcell-3468
   plan:
@@ -554,7 +620,7 @@ jobs:
   - put: rabbitmq-s3
     get_params: {skip_download: true}
     params:
-      file: "rerabbitmq-tarball/p-rabbitmq-*.tgz"
+      file: "rabbitmq-tarball/p-rabbitmq-*.tgz"
 
 - name: spring-cloud-services
   plan:
@@ -652,8 +718,144 @@ jobs:
           version=$(cat healthwatch-pivnet/metadata.json | jq --raw-output '.Release.Version')
 
           echo "Creating tarball with version ${version}..."
-          tar czf "healthwatch-tarball/p-healthwatch-${version}.tgz" -C mysqlv2-pivnet .
+          tar czf "healthwatch-tarball/p-healthwatch-${version}.tgz" -C healthwatch-pivnet .
   - put: healthwatch-s3
     get_params: {skip_download: true}
     params:
       file: "healthwatch-tarball/p-healthwatch-*.tgz"
+
+- name: minio
+  plan:
+  - get: minio-pivnet
+    resource: minio-pivnet
+    trigger: true
+    params:
+      globs: ["*.pivotal"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: minio-pivnet
+      outputs:
+      - name: minio-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat minio-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "minio-tarball/minio-${version}.tgz" -C minio-pivnet .
+  - put: minio-s3
+    get_params: {skip_download: true}
+    params:
+      file: "minio-tarball/minio-*.tgz"
+
+- name: credhub-service-broker
+  plan:
+  - get: credhub-service-broker-pivnet
+    resource: credhub-service-broker-pivnet
+    trigger: true
+    params:
+      globs: ["*.pivotal"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: credhub-service-broker-pivnet
+      outputs:
+      - name: credhub-service-broker-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat credhub-service-broker-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "credhub-service-broker-tarball/credhub-service-broker-${version}.tgz" -C credhub-service-broker-pivnet .
+  - put: credhub-service-broker-s3
+    get_params: {skip_download: true}
+    params:
+      file: "credhub-service-broker-tarball/credhub-service-broker-*.tgz"
+
+- name: mongodb-enterprise-service
+  plan:
+  - get: mongodb-enterprise-service-pivnet
+    resource: mongodb-enterprise-service-pivnet
+    trigger: true
+    params:
+      globs: ["*.pivotal"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: mongodb-enterprise-service-pivnet
+      outputs:
+      - name: mongodb-enterprise-service-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat mongodb-enterprise-service-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "mongodb-enterprise-service-tarball/mongodb-enterprise-service-${version}.tgz" -C mongodb-enterprise-service-pivnet .
+  - put: mongodb-enterprise-service-s3
+    get_params: {skip_download: true}
+    params:
+      file: "mongodb-enterprise-service-tarball/mongodb-enterprise-service-*.tgz"
+
+- name: crunchy-postgresql
+  plan:
+  - get: crunchy-postgresql
+    resource: crunchy-postgresql-pivnet
+    trigger: true
+    params:
+      globs: ["*.pivotal"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: crunchy-postgresql-pivnet
+      outputs:
+      - name: crunchy-postgresql-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat crunchy-postgresql-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "crunchy-postgresql-tarball/crunchy-postgresql-${version}.tgz" -C crunchy-postgresql-pivnet .
+  - put: crunchy-postgresql-s3
+    get_params: {skip_download: true}
+    params:
+      file: "crunchy-postgresql-tarball/crunchy-postgresql-*.tgz"
