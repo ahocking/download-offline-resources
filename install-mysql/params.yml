@@ -88,17 +88,17 @@ proxy_shutdown_delay: 0
 proxy_startup_delay: 0
 proxy_static_ips: ''
 mysql_instances: 3
-mysql_instance_type: "large.disk"
+mysql_instance_type: "automatic"
 mysql_persistent_disk_mb: 51200
 backup_prepare_instances: 1
-backup_prepare_instance_type: "large.cpu"
+backup_prepare_instance_type: "automatic"
 backup_prepare_persistent_disk_mb: 204800
 proxy_instances: 2
-proxy_instance_type: "small.disk"
+proxy_instance_type: "automatic"
 monitoring_instances: 1
-monitoring_instance_type: "micro"
+monitoring_instance_type: "automatic"
 cf_mysql_broker_instances: 2
-cf_mysql_broker_instance_type: "small.disk"
+cf_mysql_broker_instance_type: "automatic"
 
 errands_to_disable: "broker-registrar,smoke-tests"
 
