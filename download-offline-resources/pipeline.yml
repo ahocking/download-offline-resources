@@ -1,3 +1,15 @@
+#groups for different type o resources
+groups:
+- name: PCF Core
+  jobs: [ops-manager-2-0, ops-manager-2-1, elastic-runtime-2-0, elastic-runtime-2-1]
+
+- name: Service Tiles
+  jobs: [isolation-segment, mysql, mysqlv2, rabbitmq, spring-cloud-services, redis, healthwatch]
+
+- name: Stemcells
+  jobs: [stemcell-3468, stemcell-3541, stemcell-3445]
+
+#pivnet resources for Pivotal Products
 resource_types:
 - name: pivnet
   type: docker-image
@@ -62,7 +74,7 @@ resources:
     product_version: {{ert_major_minor_version_2_1}}
     sort_by: semver
 
-- name: isolation-segment-pivnet-2-1-1
+- name: isolation-segment-pivnet
   type: pivnet
   source:
     api_token: {{pivnet_token}}
@@ -78,23 +90,47 @@ resources:
     product_version: {{mysql_major_minor_version}}
     sort_by: semver
 
-# - name: redis-pivnet
-#  type: pivnet
-#  source:
-#    api_token: {{pivnet_token}}
-#    product_slug: p-redis
-#    product_version: {{redis_major_minor_version}}
-#    sort_by: semver
-#
-# - name: rabbitmq-pivnet
-#  type: pivnet
-#  source:
-#    api_token: {{pivnet_token}}
-#    product_slug: p-rabbitmq
-#    product_version: {{rabbitmq_major_minor_version}}
-#    sort_by: semver
-#
+- name: redis-pivnet
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: p-redis
+    product_version: {{redis_major_minor_version}}
+    sort_by: semver
 
+- name: rabbitmq-pivnet
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: p-rabbitmq
+    product_version: {{rabbitmq_major_minor_version}}
+    sort_by: semver
+
+- name: spring-cloud-services-pivnet
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: p-spring-cloud-services
+    product_version: {{spring_cloud_services_major_minor_version}}
+    sort_by: semver
+
+- name: mysqlv2-pivnet
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: pivotal-mysql
+    product_version: {{mysqlv2_major_minor_version}}
+    sort_by: semver
+
+- name: healthwatch-pivnet
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: p-healthwatch
+    product_version: {{healthwatch_major_minor_version}}
+    sort_by: semver
+
+#S3 resources for Pivotal Products
 - name: ops-manager-s3
   type: s3
   source:
@@ -131,15 +167,50 @@ resources:
     bucket: {{s3_bucket}}
     regexp: "p-mysql/p-mysql-(.*).tgz"
 
+- name: mysqlv2-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "p-mysqlv2/pivotal-mysql-(.*).tgz"
 
-#- name: redis-s3
-#  type: s3
-#  source:
-#    access_key_id: {{s3_access_key_id}}
-#    secret_access_key: {{s3_secret_access_key}}
-#    endpoint: {{s3_endpoint}}
-#    bucket: {{s3_bucket}}
-#    regexp: "p-redis/p-redis-(.*).tgz"
+- name: redis-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "p-redis/p-redis-(.*).tgz"
+
+- name: rabbitmq-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "p-rabbitmq/p-rabbitmq-(.*).tgz"
+
+- name: healthwatch-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "p-healthwatch/p-healthwatch-(.*).tgz"
+
+- name: spring-cloud-services-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "p-spring-cloud-services/p-spring-cloud-services-(.*).tgz"
 
 - name: stemcell-3468-s3
   type: s3
@@ -171,6 +242,9 @@ resources:
     regexp: "stemcells/3445/bosh-stemcell-(.*)-.*.tgz"
     disable_ssl: false
 
+
+#jobs to download resources from pivnet and upload to s3 object storage
+
 jobs:
 - name: stemcell-3468
   plan:
@@ -179,6 +253,7 @@ jobs:
     trigger: true
     params:
       globs: ["*vsphere*"]
+
   - put: stemcell-3468-s3
     get_params: {skip_download: true}
     params:
@@ -345,10 +420,10 @@ jobs:
     params:
       file: "elastic-runtime-tarball/elastic-runtime-*.tgz"
 
-- name: isolation-segment-2-1-1
+- name: isolation-segment
   plan:
   - get: isolation-segment-pivnet
-    resource: isolation-segment-pivnet-2-1-1
+    resource: isolation-segment-pivnet
     trigger: true
     params:
       globs: ["*.pivotal"]
@@ -412,3 +487,173 @@ jobs:
     get_params: {skip_download: true}
     params:
       file: "mysql-tarball/p-mysql-*.tgz"
+
+- name: redis
+  plan:
+  - get: redis-pivnet
+    resource: redis-pivnet
+    trigger: true
+    params:
+      globs: ["*.pivotal"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: redis-pivnet
+      outputs:
+      - name: redis-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat redis-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "redis-tarball/p-redis-${version}.tgz" -C redis-pivnet .
+  - put: redis-s3
+    get_params: {skip_download: true}
+    params:
+      file: "redis-tarball/p-redis-*.tgz"
+
+- name: rabbitmq
+  plan:
+  - get: rabbitmq-pivnet
+    resource: rabbitmq-pivnet
+    trigger: true
+    params:
+      globs: ["*.pivotal"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: rabbitmq-pivnet
+      outputs:
+      - name: rabbitmq-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat rabbitmq-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "rabbitmq-tarball/p-rabbitmq-${version}.tgz" -C rabbitmq-pivnet .
+  - put: rabbitmq-s3
+    get_params: {skip_download: true}
+    params:
+      file: "rerabbitmq-tarball/p-rabbitmq-*.tgz"
+
+- name: spring-cloud-services
+  plan:
+  - get: spring-cloud-services-pivnet
+    resource: spring-cloud-services-pivnet
+    trigger: true
+    params:
+      globs: ["*.pivotal"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: spring-cloud-services-pivnet
+      outputs:
+      - name: spring-cloud-services-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat spring-cloud-services-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "spring-cloud-services-tarball/p-spring-cloud-services-${version}.tgz" -C spring-cloud-services-pivnet .
+  - put: spring-cloud-services-s3
+    get_params: {skip_download: true}
+    params:
+      file: "spring-cloud-services-tarball/p-spring-cloud-services-*.tgz"
+
+- name: mysqlv2
+  plan:
+  - get: mysqlv2-pivnet
+    resource: mysqlv2-pivnet
+    trigger: true
+    params:
+      globs: ["*.pivotal"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: mysqlv2-pivnet
+      outputs:
+      - name: mysqlv2-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat mysqlv2-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "mysqlv2-tarball/pivotal-mysql-${version}.tgz" -C mysqlv2-pivnet .
+  - put: mysqlv2-s3
+    get_params: {skip_download: true}
+    params:
+      file: "mysqlv2-tarball/pivotal-mysql-*.tgz"
+
+- name: healthwatch
+  plan:
+  - get: healthwatch-pivnet
+    resource: healthwatch-pivnet
+    trigger: true
+    params:
+      globs: ["*.pivotal"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: healthwatch-pivnet
+      outputs:
+      - name: healthwatch-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat healthwatch-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "healthwatch-tarball/p-healthwatch-${version}.tgz" -C mysqlv2-pivnet .
+  - put: healthwatch-s3
+    get_params: {skip_download: true}
+    params:
+      file: "healthwatch-tarball/p-healthwatch-*.tgz"
