@@ -1,20 +1,26 @@
-pivnet_token:
-opsman_major_minor_version_2_1:
-ert_major_minor_version_2_1:
-opsman_major_minor_version_2_0:
-ert_major_minor_version_2_0:
-stemcell_version:
-s3_access_key_id:
-s3_secret_access_key:
-s3_endpoint:
-s3_bucket:
+pivnet_token: CHANGEME
+s3_access_key_id: CHANGEME
+s3_secret_access_key: CHANGEME
+s3_endpoint: CHANGEME
+s3_bucket: CHANGEME
 
-isolation_segment_major_minor_version:
-redis_major_minor_version:
-rabbitmq_major_minor_version:
-spring_cloud_services_major_minor_version:
-mysql_major_minor_version:
-mysql_2_0_major_minor_version:
-healthwatch_major_minor_version:
-dataflow_major_minor_version:
-single_sign_on_major_minor_version:
+opsman_major_minor_version_2_1: ^2\.1\.2$
+ert_major_minor_version_2_1: ^2\.1\.2$
+opsman_major_minor_version_2_0: ^2\.0\.11$
+ert_major_minor_version_2_0: ^2\.0\.11$
+stemcell_version: 3363\.53$
+
+
+isolation_segment_major_minor_version: ^2\.1\.1$
+redis_major_minor_version: ^1\.11\.3$
+rabbitmq_major_minor_version: ^1\.11\.12$
+spring_cloud_services_major_minor_version: ^1\.5\.2$
+mysql_major_minor_version: ^1\.10\.13$
+mysqlv2_major_minor_version: ^2\.2\.4$
+healthwatch_major_minor_version: ^1\.1\.6$
+dataflow_major_minor_version: ^1\.0\.1$
+single_sign_on_major_minor_version: ^1\.5\.3$
+minio_major_minor_version: ^1\.0\.0$
+credhub-service-broker_major_minor_version: ^1\.0\.0$
+mongodb-enterprise-service_major_minor_version: ^1\.0\.3$
+crunchy-postgresql_major_minor_version: ^03\.090512\.109$
