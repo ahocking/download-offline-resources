@@ -7,9 +7,10 @@ groups:
   jobs: [isolation-segment, mysql, mysqlv2, rabbitmq, spring-cloud-services, redis, healthwatch, minio, credhub-service-broker, mongodb-enterprise-service, crunchy-postgresql]
 
 - name: Stemcells
-  jobs: [stemcell-3468, stemcell-3541, stemcell-3445]
+  jobs: [stemcell-3468-25, stemcell-3468-28, stemcell-3541, stemcell-3445-30, stemcell-3363, stemcell-3445-29]
 
 #pivnet resources for Pivotal Products
+#pivnet stemcells
 resource_types:
 - name: pivnet
   type: docker-image
@@ -18,12 +19,44 @@ resource_types:
     tag: latest-final
 
 resources:
-- name: stemcell-pivnet-3468
+- name: stemcell-pivnet-3363
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: stemcells
+    product_version: 3363\.53$
+    sort_by: semver
+
+- name: stemcell-pivnet-3445-30
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: stemcells
+    product_version: 3445\.30$
+    sort_by: semver
+
+- name: stemcell-pivnet-3445-29
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: stemcells
+    product_version: 3445\.29$
+    sort_by: semver
+
+- name: stemcell-pivnet-3468-25
   type: pivnet
   source:
     api_token: {{pivnet_token}}
     product_slug: stemcells
     product_version: 3468\.25$
+    sort_by: semver
+
+- name: stemcell-pivnet-3468-28
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: stemcells
+    product_version: 3468\.28$
     sort_by: semver
 
 - name: stemcell-pivnet-3541
@@ -34,14 +67,7 @@ resources:
     product_version: 3541\.9$
     sort_by: semver
 
-- name: stemcell-pivnet-3445
-  type: pivnet
-  source:
-    api_token: {{pivnet_token}}
-    product_slug: stemcells
-    product_version: 3445\.30$
-    sort_by: semver
-
+#pivnet opsman, ERT and services
 - name: ops-manager-pivnet-2-0
   type: pivnet
   source:
@@ -309,13 +335,36 @@ resources:
     regexp: "stemcells/3445/bosh-stemcell-(.*)-.*.tgz"
     disable_ssl: false
 
+- name: stemcell-3363-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "stemcells/3363/bosh-stemcell-(.*)-.*.tgz"
+    disable_ssl: false
+
 
 #jobs to download resources from pivnet and upload to s3 object storage
 jobs:
-- name: stemcell-3468
+- name: stemcell-3468-25
   plan:
   - get: stemcell-pivnet
-    resource: stemcell-pivnet-3468
+    resource: stemcell-pivnet-3468-25
+    trigger: true
+    params:
+      globs: ["*vsphere*"]
+
+  - put: stemcell-3468-s3
+    get_params: {skip_download: true}
+    params:
+      file: "stemcell-pivnet/*.tgz"
+
+- name: stemcell-3468-28
+  plan:
+  - get: stemcell-pivnet
+    resource: stemcell-pivnet-3468-28
     trigger: true
     params:
       globs: ["*vsphere*"]
@@ -337,14 +386,38 @@ jobs:
     params:
       file: "stemcell-pivnet/*.tgz"
 
-- name: stemcell-3445
+- name: stemcell-3445-30
   plan:
   - get: stemcell-pivnet
-    resource: stemcell-pivnet-3445
+    resource: stemcell-pivnet-3445-30
     trigger: true
     params:
       globs: ["*vsphere*"]
   - put: stemcell-3445-s3
+    get_params: {skip_download: true}
+    params:
+      file: "stemcell-pivnet/*.tgz"
+
+- name: stemcell-3445-29
+  plan:
+  - get: stemcell-pivnet
+    resource: stemcell-pivnet-3445-29
+    trigger: true
+    params:
+      globs: ["*vsphere*"]
+  - put: stemcell-3445-s3
+    get_params: {skip_download: true}
+    params:
+      file: "stemcell-pivnet/*.tgz"
+
+- name: stemcell-3363
+  plan:
+  - get: stemcell-pivnet
+    resource: stemcell-pivnet-3363
+    trigger: true
+    params:
+      globs: ["*vsphere*"]
+  - put: stemcell-3363-s3
     get_params: {skip_download: true}
     params:
       file: "stemcell-pivnet/*.tgz"
