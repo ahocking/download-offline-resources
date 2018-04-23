@@ -11,7 +11,7 @@ ert_major_minor_version_2_0: ^2\.0\.11$
 stemcell_version: 3363\.53$
 
 
-isolation_segment_major_minor_version: ^2\.1\.1$
+isolation_segment_major_minor_version: ^2\.0\.7$
 redis_major_minor_version: ^1\.11\.3$
 rabbitmq_major_minor_version: ^1\.11\.12$
 spring_cloud_services_major_minor_version: ^1\.5\.2$
