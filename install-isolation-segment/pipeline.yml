@@ -46,7 +46,6 @@ jobs:
     - get: pivnet-product
       params:
         unpack: true
-      trigger: true
 
   - task: upload-tile
     file: pipelines-repo/tasks/upload-product/task.yml
