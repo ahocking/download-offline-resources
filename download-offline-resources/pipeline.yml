@@ -64,7 +64,7 @@ resources:
   source:
     api_token: {{pivnet_token}}
     product_slug: stemcells
-    product_version: 3541\.9$
+    product_version: 3541\.25$
     sort_by: semver
 
 #pivnet opsman, ERT and services
