@@ -4,10 +4,10 @@ groups:
   jobs: [ops-manager-2-0, ops-manager-2-1, elastic-runtime-2-0, elastic-runtime-2-1]
 
 - name: Service Tiles
-  jobs: [isolation-segment, mysql, mysqlv2, rabbitmq, spring-cloud-services, redis, healthwatch, minio, credhub-service-broker, mongodb-enterprise-service, crunchy-postgresql]
+  jobs: [isolation-segment, mysql, mysqlv2, rabbitmq, spring-cloud-services, redis, healthwatch, minio, credhub-service-broker, mongodb-enterprise-service, crunchy-postgresql, single-sign-on, metrics]
 
 - name: Stemcells
-  jobs: [stemcell-3468-25, stemcell-3468-28, stemcell-3541, stemcell-3445-30, stemcell-3363, stemcell-3445-29]
+  jobs: [stemcell-3468-25, stemcell-3468-42, stemcell-3541-30, stemcell-3468-27, stemcell-3468-28, stemcell-3541-25, stemcell-3445-30, stemcell-3363-53, stemcell-3445-29]
 
 #pivnet resources for Pivotal Products
 #pivnet stemcells
@@ -19,7 +19,7 @@ resource_types:
     tag: latest-final
 
 resources:
-- name: stemcell-pivnet-3363
+- name: stemcell-pivnet-3363-53
   type: pivnet
   source:
     api_token: {{pivnet_token}}
@@ -51,6 +51,14 @@ resources:
     product_version: 3468\.25$
     sort_by: semver
 
+- name: stemcell-pivnet-3468-27
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: stemcells
+    product_version: 3468\.27$
+    sort_by: semver
+
 - name: stemcell-pivnet-3468-28
   type: pivnet
   source:
@@ -59,12 +67,28 @@ resources:
     product_version: 3468\.28$
     sort_by: semver
 
-- name: stemcell-pivnet-3541
+- name: stemcell-pivnet-3468-42
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: stemcells
+    product_version: 3468\.42$
+    sort_by: semver
+
+- name: stemcell-pivnet-3541-25
   type: pivnet
   source:
     api_token: {{pivnet_token}}
     product_slug: stemcells
     product_version: 3541\.25$
+    sort_by: semver
+
+- name: stemcell-pivnet-3541-30
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: stemcells
+    product_version: 3541\.30$
     sort_by: semver
 
 #pivnet opsman, ERT and services
@@ -186,6 +210,20 @@ resources:
     product_slug: crunchy-postgresql
     product_version: {{crunchy-postgresql_major_minor_version}}
 
+- name: single-sign-on-pivnet
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: pivotal_single_sign-on_service
+    product_version: {{single_sign-on_service_major_minor_version}}
+
+- name: metrics-pivnet
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: apm
+    product_version: {{metrics_major_minor_version}}
+
 #S3 resources for Pivotal Products
 - name: ops-manager-s3
   type: s3
@@ -304,6 +342,24 @@ resources:
     bucket: {{s3_bucket}}
     regexp: "crunchy-postgresql/crunchy-postgresql-(.*).tgz"
 
+- name: single-sign-on-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "single-sign-on/single-sign-on-(.*).tgz"
+
+- name: metrics-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "metrics/metrics-(.*).tgz"
+
 #stemcells
 - name: stemcell-3468-s3
   type: s3
@@ -351,8 +407,9 @@ jobs:
 - name: stemcell-3468-25
   plan:
   - get: stemcell-pivnet
-    resource: stemcell-pivnet-3468-25
     trigger: true
+    resource: stemcell-pivnet-3468-25
+
     params:
       globs: ["*vsphere*"]
 
@@ -360,12 +417,28 @@ jobs:
     get_params: {skip_download: true}
     params:
       file: "stemcell-pivnet/*.tgz"
+
+- name: stemcell-3468-27
+  plan:
+  - get: stemcell-pivnet
+    trigger: true
+    resource: stemcell-pivnet-3468-27
+
+    params:
+      globs: ["*vsphere*"]
+
+  - put: stemcell-3468-s3
+    get_params: {skip_download: true}
+    params:
+      file: "stemcell-pivnet/*.tgz"
+
 
 - name: stemcell-3468-28
   plan:
   - get: stemcell-pivnet
-    resource: stemcell-pivnet-3468-28
     trigger: true
+    resource: stemcell-pivnet-3468-28
+
     params:
       globs: ["*vsphere*"]
 
@@ -374,11 +447,40 @@ jobs:
     params:
       file: "stemcell-pivnet/*.tgz"
 
-- name: stemcell-3541
+- name: stemcell-3468-42
   plan:
   - get: stemcell-pivnet
-    resource: stemcell-pivnet-3541
     trigger: true
+    resource: stemcell-pivnet-3468-42
+
+    params:
+      globs: ["*vsphere*"]
+
+  - put: stemcell-3468-s3
+    get_params: {skip_download: true}
+    params:
+      file: "stemcell-pivnet/*.tgz"
+
+
+- name: stemcell-3541-25
+  plan:
+  - get: stemcell-pivnet
+    trigger: true
+    resource: stemcell-pivnet-3541-25
+
+    params:
+      globs: ["*vsphere*"]
+  - put: stemcell-3541-s3
+    get_params: {skip_download: true}
+    params:
+      file: "stemcell-pivnet/*.tgz"
+
+- name: stemcell-3541-30
+  plan:
+  - get: stemcell-pivnet
+    trigger: true
+    resource: stemcell-pivnet-3541-30
+
     params:
       globs: ["*vsphere*"]
   - put: stemcell-3541-s3
@@ -389,8 +491,9 @@ jobs:
 - name: stemcell-3445-30
   plan:
   - get: stemcell-pivnet
-    resource: stemcell-pivnet-3445-30
     trigger: true
+    resource: stemcell-pivnet-3445-30
+
     params:
       globs: ["*vsphere*"]
   - put: stemcell-3445-s3
@@ -401,8 +504,9 @@ jobs:
 - name: stemcell-3445-29
   plan:
   - get: stemcell-pivnet
-    resource: stemcell-pivnet-3445-29
     trigger: true
+    resource: stemcell-pivnet-3445-29
+
     params:
       globs: ["*vsphere*"]
   - put: stemcell-3445-s3
@@ -410,11 +514,12 @@ jobs:
     params:
       file: "stemcell-pivnet/*.tgz"
 
-- name: stemcell-3363
+- name: stemcell-3363-53
   plan:
   - get: stemcell-pivnet
-    resource: stemcell-pivnet-3363
     trigger: true
+    resource: stemcell-pivnet-3363-53
+
     params:
       globs: ["*vsphere*"]
   - put: stemcell-3363-s3
@@ -425,8 +530,9 @@ jobs:
 - name: ops-manager-2-0
   plan:
   - get: ops-manager-pivnet
-    resource: ops-manager-pivnet-2-0
     trigger: true
+    resource: ops-manager-pivnet-2-0
+
     params:
       globs: ["*.ova"]
   - task: create-tarball
@@ -459,8 +565,9 @@ jobs:
 - name: ops-manager-2-1
   plan:
   - get: ops-manager-pivnet
-    resource: ops-manager-pivnet-2-1
     trigger: true
+    resource: ops-manager-pivnet-2-1
+
     params:
       globs: ["*.ova"]
   - task: create-tarball
@@ -494,8 +601,9 @@ jobs:
 - name: elastic-runtime-2-0
   plan:
   - get: elastic-runtime-pivnet
-    resource: elastic-runtime-pivnet-2-0
     trigger: true
+    resource: elastic-runtime-pivnet-2-0
+
     params:
       globs: ["*.pivotal"]
   - task: create-tarball
@@ -528,8 +636,9 @@ jobs:
 - name: elastic-runtime-2-1
   plan:
   - get: elastic-runtime-pivnet
-    resource: elastic-runtime-pivnet-2-1
     trigger: true
+    resource: elastic-runtime-pivnet-2-1
+
     params:
       globs: ["*.pivotal"]
   - task: create-tarball
@@ -562,8 +671,9 @@ jobs:
 - name: isolation-segment
   plan:
   - get: isolation-segment-pivnet
-    resource: isolation-segment-pivnet
     trigger: true
+    resource: isolation-segment-pivnet
+
     params:
       globs: ["*.pivotal"]
   - task: create-tarball
@@ -596,8 +706,9 @@ jobs:
 - name: mysql
   plan:
   - get: mysql-pivnet
-    resource: mysql-pivnet
     trigger: true
+    resource: mysql-pivnet
+
     params:
       globs: ["*.pivotal"]
   - task: create-tarball
@@ -630,8 +741,9 @@ jobs:
 - name: redis
   plan:
   - get: redis-pivnet
-    resource: redis-pivnet
     trigger: true
+    resource: redis-pivnet
+
     params:
       globs: ["*.pivotal"]
   - task: create-tarball
@@ -664,8 +776,9 @@ jobs:
 - name: rabbitmq
   plan:
   - get: rabbitmq-pivnet
-    resource: rabbitmq-pivnet
     trigger: true
+    resource: rabbitmq-pivnet
+
     params:
       globs: ["*.pivotal"]
   - task: create-tarball
@@ -698,8 +811,9 @@ jobs:
 - name: spring-cloud-services
   plan:
   - get: spring-cloud-services-pivnet
-    resource: spring-cloud-services-pivnet
     trigger: true
+    resource: spring-cloud-services-pivnet
+
     params:
       globs: ["*.pivotal"]
   - task: create-tarball
@@ -732,8 +846,9 @@ jobs:
 - name: mysqlv2
   plan:
   - get: mysqlv2-pivnet
-    resource: mysqlv2-pivnet
     trigger: true
+    resource: mysqlv2-pivnet
+
     params:
       globs: ["*.pivotal"]
   - task: create-tarball
@@ -766,8 +881,9 @@ jobs:
 - name: healthwatch
   plan:
   - get: healthwatch-pivnet
-    resource: healthwatch-pivnet
     trigger: true
+    resource: healthwatch-pivnet
+
     params:
       globs: ["*.pivotal"]
   - task: create-tarball
@@ -800,8 +916,9 @@ jobs:
 - name: minio
   plan:
   - get: minio-pivnet
-    resource: minio-pivnet
     trigger: true
+    resource: minio-pivnet
+
     params:
       globs: ["*.pivotal"]
   - task: create-tarball
@@ -834,8 +951,9 @@ jobs:
 - name: credhub-service-broker
   plan:
   - get: credhub-service-broker-pivnet
-    resource: credhub-service-broker-pivnet
     trigger: true
+    resource: credhub-service-broker-pivnet
+
     params:
       globs: ["*.pivotal"]
   - task: create-tarball
@@ -868,8 +986,9 @@ jobs:
 - name: mongodb-enterprise-service
   plan:
   - get: mongodb-enterprise-service-pivnet
-    resource: mongodb-enterprise-service-pivnet
     trigger: true
+    resource: mongodb-enterprise-service-pivnet
+
     params:
       globs: ["*.pivotal"]
   - task: create-tarball
@@ -902,8 +1021,9 @@ jobs:
 - name: crunchy-postgresql
   plan:
   - get: crunchy-postgresql-pivnet
-    resource: crunchy-postgresql-pivnet
     trigger: true
+    resource: crunchy-postgresql-pivnet
+
     params:
       globs: ["*.pivotal"]
   - task: create-tarball
@@ -932,3 +1052,73 @@ jobs:
     get_params: {skip_download: true}
     params:
       file: "crunchy-postgresql-tarball/crunchy-postgresql-*.tgz"
+
+- name: single-sign-on
+  plan:
+  - get: single-sign-on-pivnet
+    trigger: true
+    resource: single-sign-on-pivnet
+
+    params:
+      globs: ["*.pivotal"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: single-sign-on-pivnet
+      outputs:
+      - name: single-sign-on-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat single-sign-on-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "single-sign-on-tarball/single-sign-on-${version}.tgz" -C single-sign-on-pivnet .
+  - put: single-sign-on-s3
+    get_params: {skip_download: true}
+    params:
+      file: "single-sign-on-tarball/single-sign-on-*.tgz"
+
+- name: metrics
+  plan:
+  - get: metrics-pivnet
+    trigger: true
+    resource: metrics-pivnet
+
+    params:
+      globs: ["*.pivotal"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: metrics-pivnet
+      outputs:
+      - name: metrics-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat metrics-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "metrics-tarball/metrics-${version}.tgz" -C metrics-pivnet .
+  - put: metrics-s3
+    get_params: {skip_download: true}
+    params:
+      file: "metrics-tarball/metrics-*.tgz"
