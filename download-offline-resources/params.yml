@@ -24,3 +24,6 @@ minio_major_minor_version: ^1\.0\.0$
 credhub-service-broker_major_minor_version: ^1\.0\.0$
 mongodb-enterprise-service_major_minor_version: ^1\.0\.3$
 crunchy-postgresql_major_minor_version: ^03\.090512\.109$
+single_sign-on_service_major_minor_version: ^1\.6\.0$
+metrics_major_minor_version: ^1\.4\.5$
+ecs-service-broker_major_minor_version: ^1\.0\.2$

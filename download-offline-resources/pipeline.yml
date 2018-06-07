@@ -4,7 +4,7 @@ groups:
   jobs: [ops-manager-2-0, ops-manager-2-1, elastic-runtime-2-0, elastic-runtime-2-1]
 
 - name: Service Tiles
-  jobs: [isolation-segment, mysql, mysqlv2, rabbitmq, spring-cloud-services, redis, healthwatch, minio, credhub-service-broker, mongodb-enterprise-service, crunchy-postgresql, single-sign-on, metrics]
+  jobs: [isolation-segment, mysql, mysqlv2, rabbitmq, spring-cloud-services, redis, healthwatch, minio, credhub-service-broker, mongodb-enterprise-service, crunchy-postgresql, single-sign-on, metrics, ecs-service-broker]
 
 - name: Stemcells
   jobs: [stemcell-3468-25, stemcell-3468-42, stemcell-3541-30, stemcell-3468-27, stemcell-3468-28, stemcell-3541-25, stemcell-3445-30, stemcell-3363-53, stemcell-3445-29]
@@ -224,6 +224,13 @@ resources:
     product_slug: apm
     product_version: {{metrics_major_minor_version}}
 
+- name: ecs-service-broker-pivnet
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: ecs-service-broker
+    product_version: {{ecs-service-broker_major_minor_version}}
+
 #S3 resources for Pivotal Products
 - name: ops-manager-s3
   type: s3
@@ -359,6 +366,15 @@ resources:
     endpoint: {{s3_endpoint}}
     bucket: {{s3_bucket}}
     regexp: "metrics/metrics-(.*).tgz"
+
+- name: ecs-service-broker-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "ecs-service-broker/ecs-service-broker-(.*).tgz"
 
 #stemcells
 - name: stemcell-3468-s3
@@ -1122,3 +1138,38 @@ jobs:
     get_params: {skip_download: true}
     params:
       file: "metrics-tarball/metrics-*.tgz"
+
+- name: ecs-service-broker
+  plan:
+  - get: ecs-service-broker-pivnet
+    trigger: true
+    resource: ecs-service-broker-pivnet
+
+    params:
+      globs: ["*.pivotal"]
+  - task: create-tarball
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: pcfnorm/rootfs
+      inputs:
+      - name: ecs-service-broker-pivnet
+      outputs:
+      - name: ecs-service-broker-tarball
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          version=$(cat ecs-service-broker-pivnet/metadata.json | jq --raw-output '.Release.Version')
+
+          echo "Creating tarball with version ${version}..."
+          tar czf "ecs-service-broker-tarball/ecs-service-broker-${version}.tgz" -C ecs-service-broker-pivnet .
+  - put: ecs-service-broker-s3
+    get_params: {skip_download: true}
+    params:
+      file: "ecs-service-broker-tarball/ecs-service-broker-*.tgz"
