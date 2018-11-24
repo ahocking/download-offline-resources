@@ -35,12 +35,14 @@ function main() {
   if [ -z "$IAAS_TYPE" ]; then abort "The required env var IAAS_TYPE was not set"; fi
   if [ -z "$PRODUCT_SLUG"]; then abort "The required env var PRODUCT_SLUG was not set"; fi
 
+  local version=2.3.5
+
   pivnet-cli login --api-token="$API_TOKEN"
   pivnet-cli eula --eula-slug=pivotal_software_eula >/dev/null 
 
   #loop through all the releases and download the product
-  local version=2.3.5
-  download_pivnet_product $PRODUCT_SLUG $version $IAAS_TYPE
+  
+  download_pivnet_product ${PRODUCT_SLUG} ${version} ${IAAS_TYPE}
 }
 
 main
