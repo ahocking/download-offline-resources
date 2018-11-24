@@ -18,7 +18,9 @@ function abort() {
 function download_pivnet_product() {
   #pivnet dlpf -p, --product-slug' and `-r, --release-version' -g Glob to match product name e.g. *aws*
   echo "downloading pivnet products"
-  pivnet dlpf -p $1 -r $2 -g *${3}* -d $DOWNLOAD_PRODUCT_DIR --accept-eula
+  #pivnet dlpf -p $1 -r $2 -g *${3}* -d $DOWNLOAD_PRODUCT_DIR --accept-eula
+  pivnet dlpf -p $1 -r 2.3.5 -g *$3* -d $DOWNLOAD_PRODUCT_DIR --accept-eula
+
 }
 
 # function clear_dirs() {
@@ -42,7 +44,7 @@ function main() {
 
   #loop through all the releases and download the product
   
-  download_pivnet_product ${PRODUCT_SLUG} ${version} ${IAAS_TYPE}
+  download_pivnet_product
 }
 
 main
