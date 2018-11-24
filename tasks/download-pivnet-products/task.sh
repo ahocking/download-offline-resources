@@ -17,7 +17,7 @@ function download_pivnet_stemcell() {
 
 function download_pivnet_product() {
   #pivnet dlpf -p, --product-slug' and `-r, --release-version' -g Glob to match product name e.g. *aws*
-  pivnet dlpf -p $1 -r $2 -g *$3* -d $DOWNLOAD_PRODUCT_DIR --accept-eula
+  pivnet dlpf -p $1 -r $2 -g *${3}* -d $DOWNLOAD_PRODUCT_DIR --accept-eula
 }
 
 function clear_dirs() {
@@ -29,7 +29,7 @@ function tar_pivnet_product() {
 
 }
 
-function main {
+function main() {
   if [ -z "$API_TOKEN" ]; then abort "The required env var API_TOKEN was not set for pivnet"; fi
   if [ -z "$IAAS_TYPE" ]; then abort "The required env var IAAS_TYPE was not set"; fi
   if [ -z "$PRODUCT_SLUG"]; then abort "The required env var PRODUCT_SLUG was not set"; fi
