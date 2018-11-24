@@ -13,165 +13,23 @@ resources:
     uri: https://github.com/ahocking/download-offline-resources
     branch: mling
 
-#resources for s3 
-- name: ops-manager-s3
-  type: s3
-  source:
-    access_key_id: {{s3_access_key_id}}
-    secret_access_key: {{s3_secret_access_key}}
-    endpoint: {{s3_endpoint}}
-    bucket: {{s3_bucket}}
-    regexp: "ops-manager/ops-manager-(.*).tgz"
-
-# - name: elastic-runtime-s3
+# #resources for s3 
+# - name: ops-manager-s3
 #   type: s3
 #   source:
 #     access_key_id: {{s3_access_key_id}}
 #     secret_access_key: {{s3_secret_access_key}}
 #     endpoint: {{s3_endpoint}}
 #     bucket: {{s3_bucket}}
-#     regexp: "elastic-runtime/elastic-runtime-(.*).tgz"
-
-# - name: isolation-segment-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "p-isolation-segment/p-isolation-segment-(.*).tgz"
-
-# - name: mysql-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "p-mysql/p-mysql-(.*).tgz"
-
-# - name: mysqlv2-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "p-mysqlv2/pivotal-mysql-(.*).tgz"
-
-# - name: redis-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "p-redis/p-redis-(.*).tgz"
-
-# - name: rabbitmq-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "p-rabbitmq/p-rabbitmq-(.*).tgz"
-
-# - name: healthwatch-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "p-healthwatch/p-healthwatch-(.*).tgz"
-
-# - name: spring-cloud-services-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "p-spring-cloud-services/p-spring-cloud-services-(.*).tgz"
-
-# - name: minio-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "minio/minio-(.*).tgz"
-
-# - name: credhub-service-broker-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "credhub-service-broker/credhub-service-broker-(.*).tgz"
-
-# - name: mongodb-enterprise-service-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "mongodb-enterprise-service/mongodb-enterprise-service-(.*).tgz"
-
-# - name: crunchy-postgresql-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "crunchy-postgresql/crunchy-postgresql-(.*).tgz"
-
-# - name: single-sign-on-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "single-sign-on/single-sign-on-(.*).tgz"
-
-# - name: metrics-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "metrics/metrics-(.*).tgz"
-
-# - name: ecs-service-broker-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "ecs-service-broker/ecs-service-broker-(.*).tgz"
-
-# - name: stemcell-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "stemcells/bosh-stemcell-(.*)-.*.tgz"
+#     regexp: "ops-manager/ops-manager-(.*).tgz"
 
 jobs:
-
 - name: download-opsman
+  plan: 
+  - get: offline-resources-repo
+
   - task: download-opsman
-    file: batch-offline-resources/tasks/download-pivnet-products
+    file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
       PRODUCT_SLUG: {{opsmman_produt_slug}}
       TARGER_VERSION: {{opsmman_target_version}}
