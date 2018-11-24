@@ -20,4 +20,4 @@ outputs:
   - name: pivnet-products  
 
 run:
-  path: offline-resources-repo/tasks/download-pivnet-product/task.sh
+  path: offline-resources-repo/tasks/download-pivnet-products/task.sh
