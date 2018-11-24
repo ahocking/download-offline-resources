@@ -1,0 +1,23 @@
+---
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: {repository: pcfnorm/rootfs}
+
+params:
+  PRODUCT_SLUG:
+  STARTING_VER:
+  ENDING_VER:
+  IAAS_TYPE:
+  API_TOKEN:
+
+inputs:
+  - name: offline-resources-repo
+
+outputs:
+  - name: pivnet-products  
+
+run:
+  path: offline-resources-repo/tasks/download-pivnet-product/task.sh
