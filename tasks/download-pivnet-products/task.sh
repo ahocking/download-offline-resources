@@ -42,7 +42,7 @@ function main() {
 
   #loop through all the releases and download the product
   
-  download_pivnet_product
+  #download_pivnet_product
 }
 
 main
