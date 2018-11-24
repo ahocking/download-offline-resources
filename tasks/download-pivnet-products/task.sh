@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -eux
 
 export CWD=$PWD
 export DOWNLOAD_PRODUCT_DIR="${CWD}/pivnet-product"
@@ -32,7 +32,7 @@ function tar_pivnet_product() {
 function main {
   if [ -z "$API_TOKEN" ]; then abort "The required env var API_TOKEN was not set for pivnet"; fi
   if [ -z "$IAAS_TYPE" ]; then abort "The required env var IAAS_TYPE was not set"; fi
-  if [ -z "$PRODUCT_SLUG"]; then abort 
+  if [ -z "$PRODUCT_SLUG"]; then abort "The required env var PRODUCT_SLUG was not set"; fi
 
   pivnet-cli login --api-token="$API_TOKEN"
   pivnet-cli eula --eula-slug=pivotal_software_eula >/dev/null 
@@ -41,3 +41,5 @@ function main {
   local version=2.3.5
   download_pivnet_product $PRODUCT_SLUG $version $IAAS_TYPE
 }
+
+main
