@@ -13,30 +13,29 @@ resources:
     uri: https://github.com/ahocking/download-offline-resources
     branch: mling
 
-# #resources for s3 
-# - name: ops-manager-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "ops-manager/ops-manager-(.*).tgz"
+#resources for s3 
+- name: ops-manager-s3
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    secret_access_key: {{s3_secret_access_key}}
+    endpoint: {{s3_endpoint}}
+    bucket: {{s3_bucket}}
+    regexp: "(.*)-vsphere-(.*).ova"
 
 jobs:
 - name: download-opsman
   plan: 
   - get: offline-resources-repo
-
   - task: download-opsman
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
       PRODUCT_SLUG: {{opsmman_produt_slug}}
       TARGER_VERSION: {{opsmman_target_version}}
-      VERSIONS: {{versions}}
+      REVISIONS: {{revisions}}
       IAAS_TYPE: {{iaas_type}}
       API_TOKEN: {{pivnet_token}}
-  # - put: ops-manager-s3
-  #   get_params: {skip_download: true}
-  #   params:
-  #     file: "ops-manager-tarball/ops-manager-*.tgz"
+  - put: ops-manager-s3
+    get_params: {SkipDownload: true}
+    params:
+      file: "pivnet-products/*.ova"

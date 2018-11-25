@@ -35,12 +35,21 @@ function main() {
   if [ -z "$PRODUCT_SLUG"]; then abort "The required env var PRODUCT_SLUG was not set"; fi
 
   local version=2.3.5
+  local minor_version=$(echo $TARGER_VERSION | awk -F'.' ' { print $NF } ')
 
   pivnet-cli login --api-token="$API_TOKEN"
   pivnet-cli eula --eula-slug=pivotal_software_eula >/dev/null 
 
+  pivnet releases -p $PRODUCT_SLUG --format=json | jq --raw-output --arg v "$TARGET_VERSION" '.[] | select (.version <= $v) | .version' > releases.json
+
+
+  local versions=$(head -${REVISIONS} releases.json)
+
+  echo $versions
+
   #loop through all the releases and download the product
   
+
   download_pivnet_product ${PRODUCT_SLUG} ${version} ${IAAS_TYPE}
 }
 
