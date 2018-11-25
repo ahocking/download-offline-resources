@@ -31,7 +31,7 @@ jobs:
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
       PRODUCT_SLUG: {{opsmman_produt_slug}}
-      TARGER_VERSION: {{opsmman_target_version}}
+      TARGET_VERSION: {{opsmman_target_version}}
       REVISIONS: {{revisions}}
       IAAS_TYPE: {{iaas_type}}
       API_TOKEN: {{pivnet_token}}
