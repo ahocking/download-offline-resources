@@ -29,11 +29,23 @@ function download_pivnet_product() {
 
 # }
 
+function s3_upload() {
+  echo "Using s3 endpoint: ${S3_ENDPOINT}"
+  aws s3 --endpoint-url ${S3_ENDPOINT} cp ${DOWNLOAD_PRODUCT_DIR}/* "s3://${S3_BUCKET_NAME}/${1}/"
+}
+
 
 function main() {
   if [ -z "$API_TOKEN" ]; then abort "The required env var API_TOKEN was not set for pivnet"; fi
   if [ -z "$IAAS_TYPE" ]; then abort "The required env var IAAS_TYPE was not set"; fi
   if [ -z "$PRODUCT_SLUG"]; then abort "The required env var PRODUCT_SLUG was not set"; fi
+  
+  if [[ -z "${AWS_ACCESS_KEY_ID}" ]]; then abort "The required env var AWS_ACCESS_KEY_ID was not set"; fi
+  if [[ -z "${AWS_SECRET_ACCESS_KEY}" ]]; then abort "The required env var AWS_SECRET_ACCESS_KEY was not set"; fi
+  if [[ -z "${S3_BUCKET_NAME}" ]]; then abort "The required env var S3_BUCKET_NAME was not set"; fi
+  if [[ -z "${S3_ENDPOINT}" ]]; then
+    S3_ENDPOINT=https://s3.amazonaws.com
+  fi
 
   pivnet-cli login --api-token="$API_TOKEN"
   pivnet-cli eula --eula-slug=pivotal_software_eula >/dev/null 
@@ -44,10 +56,16 @@ function main() {
   local versions=($(head -${REVISIONS} ${DOWNLOAD_PRODUCT_DIR}/releases.json))
 
   #loop through all the releases and download the product
-  for ver in "${versions[@]}"; do
-    echo $ver
-    download_pivnet_product ${PRODUCT_SLUG} ${ver} ${IAAS_TYPE}
-  done
+  if [ $PRODUCT_SLUG = "ops-manager" ]
+    for ver in "${versions[@]}"; do
+      echo $ver
+      download_pivnet_product ${PRODUCT_SLUG} ${ver} ${IAAS_TYPE}
+    done
+    
+    echo "upload all opsman to s3"
+    s3_upload "OPSMAN"
+
+  fi
 }
 
 main

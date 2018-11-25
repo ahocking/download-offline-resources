@@ -35,10 +35,11 @@ jobs:
       REVISIONS: {{revisions}}
       IAAS_TYPE: {{iaas_type}}
       API_TOKEN: {{pivnet_token}}
-      ACCESS_KEY: {{s3_access_key_id}}
-      ACCESS_SECRET: {{s3_secret_access_key}}
-      BUCKET: {{s3_bucket}}
-      
+      AWS_ACCESS_KEY_ID: {{s3_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
+      S3_BUCKET_NAME: {{s3_bucket}}
+      S3_ENDPOINT: {{s3_endpoint}}
+
   # - put: ops-manager-s3
   #   get_params: {SkipDownload: true}
   #   params:
