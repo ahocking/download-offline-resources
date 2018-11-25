@@ -8,8 +8,8 @@ image_resource:
 
 params:
   PRODUCT_SLUG:
-  TARGER_VERSION:
-  VERSIONS:
+  TARGET_VERSION:
+  REVISIONS:
   IAAS_TYPE:
   API_TOKEN:
 
