@@ -40,7 +40,7 @@ function main() {
   pivnet-cli releases -p $PRODUCT_SLUG --format=json | jq --raw-output --arg v "$TARGET_VERSION" '.[] | select (.version <= $v) | .version' > $DOWNLOAD_PRODUCT_DIR/releases.json
 
 
-  local versions=$(head -${REVISIONS} ${DOWNLOAD_PRODUCT_DIR}/releases.json)
+  local versions=($(head -${REVISIONS} ${DOWNLOAD_PRODUCT_DIR}/releases.json))
 
   #loop through all the releases and download the product
   for ver in "${versions[@]}"; do
