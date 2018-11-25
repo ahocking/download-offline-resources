@@ -31,7 +31,7 @@ function download_pivnet_product() {
 
 function s3_upload() {
   echo "Using s3 endpoint: ${S3_ENDPOINT}"
-  aws s3 cp ${DOWNLOAD_PRODUCT_DIR}/* "s3://${S3_BUCKET_NAME}/${1}/"
+  aws s3 sync ${DOWNLOAD_PRODUCT_DIR}/ "s3://${S3_BUCKET_NAME}/${1}/"
 }
 
 
