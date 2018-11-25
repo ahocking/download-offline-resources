@@ -42,12 +42,11 @@ function main() {
 
   local versions=$(head -${REVISIONS} ${DOWNLOAD_PRODUCT_DIR}/releases.json)
 
-  echo $versions
-
   #loop through all the releases and download the product
-  
-
-  # download_pivnet_product ${PRODUCT_SLUG} ${TARGET_VERSION} ${IAAS_TYPE}
+  for ver in "${versions[@]}"; do
+    echo $ver
+    download_pivnet_product ${PRODUCT_SLUG} ${ver} ${IAAS_TYPE}
+  done
 }
 
 main
