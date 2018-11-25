@@ -56,7 +56,7 @@ function main() {
   local versions=($(head -${REVISIONS} ${DOWNLOAD_PRODUCT_DIR}/releases.json))
 
   #loop through all the releases and download the product
-  if [ $PRODUCT_SLUG = "ops-manager" ]
+  if [ $PRODUCT_SLUG = "ops-manager" ]; then
     for ver in "${versions[@]}"; do
       echo $ver
       download_pivnet_product ${PRODUCT_SLUG} ${ver} ${IAAS_TYPE}
