@@ -37,17 +37,17 @@ function main() {
   pivnet-cli login --api-token="$API_TOKEN"
   pivnet-cli eula --eula-slug=pivotal_software_eula >/dev/null 
 
-  pivnet releases -p $PRODUCT_SLUG --format=json | jq --raw-output --arg v "$TARGET_VERSION" '.[] | select (.version <= $v) | .version' > releases.json
+  pivnet releases -p $PRODUCT_SLUG --format=json | jq --raw-output --arg v "$TARGET_VERSION" '.[] | select (.version <= $v) | .version' > $DOWNLOAD_PRODUCT_DIR/releases.json
 
 
-  local versions=$(head -${REVISIONS} releases.json)
+  local versions=$(head -${REVISIONS} ${DOWNLOAD_PRODUCT_DIR}/releases.json)
 
   echo $versions
 
   #loop through all the releases and download the product
   
 
-  download_pivnet_product ${PRODUCT_SLUG} ${TARGET_VERSION} ${IAAS_TYPE}
+  # download_pivnet_product ${PRODUCT_SLUG} ${TARGET_VERSION} ${IAAS_TYPE}
 }
 
 main
