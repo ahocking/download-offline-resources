@@ -13,15 +13,15 @@ resources:
     uri: https://github.com/ahocking/download-offline-resources
     branch: mling
 
-#resources for s3 
-- name: ops-manager-s3
-  type: s3
-  source:
-    access_key_id: {{s3_access_key_id}}
-    secret_access_key: {{s3_secret_access_key}}
-    endpoint: {{s3_endpoint}}
-    bucket: {{s3_bucket}}
-    regexp: "(.*)-vsphere-(.*).ova"
+# #resources for s3 
+# - name: ops-manager-s3
+#   type: s3
+#   source:
+#     access_key_id: {{s3_access_key_id}}
+#     secret_access_key: {{s3_secret_access_key}}
+#     endpoint: {{s3_endpoint}}
+#     bucket: {{s3_bucket}}
+#     regexp: "(.*)-vsphere-(.*).ova"
 
 jobs:
 - name: download-opsman
@@ -35,7 +35,11 @@ jobs:
       REVISIONS: {{revisions}}
       IAAS_TYPE: {{iaas_type}}
       API_TOKEN: {{pivnet_token}}
-  - put: ops-manager-s3
-    get_params: {SkipDownload: true}
-    params:
-      file: "pivnet-products/*.ova"
+      ACCESS_KEY: {{s3_access_key_id}}
+      ACCESS_SECRET: {{s3_secret_access_key}}
+      BUCKET: {{s3_bucket}}
+      
+  # - put: ops-manager-s3
+  #   get_params: {SkipDownload: true}
+  #   params:
+  #     file: "pivnet-products/*.ova"
