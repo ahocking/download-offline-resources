@@ -68,6 +68,15 @@ function main() {
     done
     echo "upload all opsman to s3"
     s3_product_upload $PRODUCT_SLUG
+  elif [ $PRODUCT_SLUG = "elastic-runtime" ]; 
+    for ver in "${versions[@]}"; do
+      echo $ver
+      download_pivnet_product ${PRODUCT_SLUG} ${ver} "cf*.pivotal"
+      find_stemcells ${PRODUCT_SLUG} ${ver}
+    done
+    download_pivnet_stemcell
+    s3_product_upload  $PRODUCT_SLUG
+    s3_stemcell_upload "stemcells"  
   else
     for ver in "${versions[@]}"; do
       echo $ver
@@ -77,7 +86,6 @@ function main() {
     download_pivnet_stemcell
     s3_product_upload  $PRODUCT_SLUG
     s3_stemcell_upload "stemcells"
-
   fi
 }
 
