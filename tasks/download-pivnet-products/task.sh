@@ -30,6 +30,11 @@ function s3_product_upload() {
   aws s3 sync ${DOWNLOAD_PRODUCT_DIR}/ "s3://${S3_BUCKET_NAME}/${1}/"
 }
 
+function s3_stemcell_upload() {
+  echo "Using s3 endpoint: ${S3_ENDPOINT}"
+  aws s3 sync ${DOWNLOAD_STEMCELL_DIR}/ "s3://${S3_BUCKET_NAME}/${1}/"
+}
+
 function find_stemcells() {
   touch $DOWNLOAD_STEMCELL_DIR/stemcell.versions
   pivnet-cli release-dependencies  -p $1 -r $2 --format=json | jq --raw-output '.[]| select (.release.product.slug == "stemcells") | .release.version' | head -1 >> $DOWNLOAD_STEMCELL_DIR/stemcell.versions
@@ -70,7 +75,9 @@ function main() {
       find_stemcells ${PRODUCT_SLUG} ${ver}
     done
     download_pivnet_stemcell
-    
+    s3_product_upload  $PRODUCT_SLUG
+    s3_stemcell_upload "stemcells"
+
   fi
 }
 
