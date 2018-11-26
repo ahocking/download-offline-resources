@@ -62,7 +62,7 @@ function main() {
   else
     for ver in "${versions[@]}"; do
       echo $ver
-      download_pivnet_product ${PRODUCT_SLUG} ${ver} ${IAAS_TYPE}
+      download_pivnet_product ${PRODUCT_SLUG} ${ver} ".pivotal"
       find_stemcells ${PRODUCT_SLUG} ${ver}
     done
   fi
