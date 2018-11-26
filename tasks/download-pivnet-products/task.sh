@@ -4,7 +4,7 @@ set -eux
 
 export CWD=$PWD
 export DOWNLOAD_PRODUCT_DIR="${CWD}/pivnet-products"
-export DOWNLOAD_STEMCELL_DIR="${CWD}/stemcell"
+export DOWNLOAD_STEMCELL_DIR="${CWD}/stemcells"
 
 function abort() {
   echo "$1"

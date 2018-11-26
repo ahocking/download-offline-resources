@@ -13,16 +13,6 @@ resources:
     uri: https://github.com/ahocking/download-offline-resources
     branch: mling
 
-# #resources for s3 
-# - name: ops-manager-s3
-#   type: s3
-#   source:
-#     access_key_id: {{s3_access_key_id}}
-#     secret_access_key: {{s3_secret_access_key}}
-#     endpoint: {{s3_endpoint}}
-#     bucket: {{s3_bucket}}
-#     regexp: "(.*)-vsphere-(.*).ova"
-
 jobs:
 - name: download-opsman
   plan: 
@@ -40,7 +30,34 @@ jobs:
       S3_BUCKET_NAME: {{s3_bucket}}
       S3_ENDPOINT: {{s3_endpoint}}
 
-  # - put: ops-manager-s3
-  #   get_params: {SkipDownload: true}
-  #   params:
-  #     file: "pivnet-products/*.ova"
+- name: download-ert
+  plan: 
+  - get: offline-resources-repo
+  - task: download-ert
+    file: offline-resources-repo/tasks/download-pivnet-products/task.yml
+    params:
+      PRODUCT_SLUG: {{ert_produt_slug}}
+      TARGET_VERSION: {{ert_target_version}}
+      REVISIONS: {{revisions}}
+      IAAS_TYPE: {{iaas_type}}
+      API_TOKEN: {{pivnet_token}}
+      AWS_ACCESS_KEY_ID: {{s3_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
+      S3_BUCKET_NAME: {{s3_bucket}}
+      S3_ENDPOINT: {{s3_endpoint}}
+
+- name: download-redis
+  plan: 
+  - get: offline-resources-repo
+  - task: download-ert
+    file: offline-resources-repo/tasks/download-pivnet-products/task.yml
+    params:
+      PRODUCT_SLUG: {{redis_produt_slug}}
+      TARGET_VERSION: {{redis_target_version}}
+      REVISIONS: {{revisions}}
+      IAAS_TYPE: {{iaas_type}}
+      API_TOKEN: {{pivnet_token}}
+      AWS_ACCESS_KEY_ID: {{s3_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
+      S3_BUCKET_NAME: {{s3_bucket}}
+      S3_ENDPOINT: {{s3_endpoint}}

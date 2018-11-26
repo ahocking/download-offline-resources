@@ -21,7 +21,8 @@ inputs:
   - name: offline-resources-repo
 
 outputs:
-  - name: pivnet-products  
+  - name: pivnet-products
+  - name: stemcells
 
 run:
   path: offline-resources-repo/tasks/download-pivnet-products/task.sh
