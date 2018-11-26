@@ -26,8 +26,8 @@ function s3_upload() {
 }
 
 funcation find_stemcells() {
-  touch $DOWNLOAD_STEMCELL_DIR/stemcell.versions
-  pivnet-cli release-dependencies  -p $1 -r $2 --format=json | jq '.[]| select (.release.product.slug == "stemcells") | .release.version' >> $DOWNLOAD_STEMCELL_DIR/stemcell.versions
+  #touch $DOWNLOAD_STEMCELL_DIR/stemcell.versions
+  pivnet-cli release-dependencies  -p $1 -r $2 --format=json | jq --raw-output '.[]| select (.release.product.slug == "stemcells") | .release.version' >> $DOWNLOAD_STEMCELL_DIR/stemcell.versions
 }
 
 function main() {

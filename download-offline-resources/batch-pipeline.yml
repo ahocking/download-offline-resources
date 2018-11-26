@@ -14,7 +14,7 @@ resources:
     branch: mling
 
 jobs:
-- name: download-opsman
+- name: DOWNLOAD-OPSMAN
   plan: 
   - get: offline-resources-repo
   - task: download-opsman
@@ -30,7 +30,7 @@ jobs:
       S3_BUCKET_NAME: {{s3_bucket}}
       S3_ENDPOINT: {{s3_endpoint}}
 
-- name: download-ert
+- name: DOWNLOAD-ERT
   plan: 
   - get: offline-resources-repo
   - task: download-ert
@@ -46,10 +46,10 @@ jobs:
       S3_BUCKET_NAME: {{s3_bucket}}
       S3_ENDPOINT: {{s3_endpoint}}
 
-- name: download-redis
+- name: DOWNLOAD-P-REDIS
   plan: 
   - get: offline-resources-repo
-  - task: download-ert
+  - task: download-redis
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
       PRODUCT_SLUG: {{redis_produt_slug}}
