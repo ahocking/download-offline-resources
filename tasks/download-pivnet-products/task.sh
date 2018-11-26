@@ -69,6 +69,8 @@ function main() {
       download_pivnet_product ${PRODUCT_SLUG} ${ver} ".pivotal"
       find_stemcells ${PRODUCT_SLUG} ${ver}
     done
+    download_pivnet_stemcell
+    
   fi
 }
 
