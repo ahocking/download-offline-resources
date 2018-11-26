@@ -20,20 +20,15 @@ function download_pivnet_product() {
   pivnet-cli dlpf -p $1 -r $2 -g *${3}* -d $DOWNLOAD_PRODUCT_DIR --accept-eula
 }
 
-# function clear_dirs() {
-#   #clears the pivnet-product directory after each download
-# }
-
-# function tar_pivnet_product() {
-#   #tars up the pivnet-product directory and place it in output directory
-
-# }
-
 function s3_upload() {
   echo "Using s3 endpoint: ${S3_ENDPOINT}"
   aws s3 sync ${DOWNLOAD_PRODUCT_DIR}/ "s3://${S3_BUCKET_NAME}/${1}/"
 }
 
+funcation find_stemcells() {
+  touch $DOWNLOAD_STEMCELL_DIR/stemcell.versions
+  pivnet-cli release-dependencies  -p $1 -r $2 --format=json | jq '.[]| select (.release.product.slug == "stemcells") | .release.version' >> $DOWNLOAD_STEMCELL_DIR/stemcell.versions
+}
 
 function main() {
   if [ -z "$API_TOKEN" ]; then abort "The required env var API_TOKEN was not set for pivnet"; fi
@@ -56,15 +51,20 @@ function main() {
   local versions=($(head -${REVISIONS} ${DOWNLOAD_PRODUCT_DIR}/releases.json))
 
   #loop through all the releases and download the product
-  if [ $PRODUCT_SLUG = "ops-manager" ]; then
+  if [ $PRODUCT_SLUG = "ops-manager" ]; 
+  then
     for ver in "${versions[@]}"; do
       echo $ver
       download_pivnet_product ${PRODUCT_SLUG} ${ver} ${IAAS_TYPE}
     done
-    
     echo "upload all opsman to s3"
-    s3_upload "OPSMAN"
-
+    s3_upload $PRODUCT_SLUG
+  else
+    for ver in "${versions[@]}"; do
+      echo $ver
+      download_pivnet_product ${PRODUCT_SLUG} ${ver} ${IAAS_TYPE}
+      find_stemcells ${PRODUCT_SLUG} ${ver}
+    done
   fi
 }
 
