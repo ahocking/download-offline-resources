@@ -69,6 +69,7 @@ function main() {
     echo "upload all opsman to s3"
     s3_product_upload $PRODUCT_SLUG
   elif [ $PRODUCT_SLUG = "elastic-runtime" ]; 
+  then
     for ver in "${versions[@]}"; do
       echo $ver
       download_pivnet_product ${PRODUCT_SLUG} ${ver} "cf*.pivotal"
