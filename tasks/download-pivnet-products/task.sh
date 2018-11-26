@@ -27,12 +27,12 @@ function download_pivnet_product() {
 
 function s3_product_upload() {
   echo "Using s3 endpoint: ${S3_ENDPOINT}"
-  aws s3 sync ${DOWNLOAD_PRODUCT_DIR}/ "s3://${S3_BUCKET_NAME}/${1}/"
+  aws s3 sync ${DOWNLOAD_PRODUCT_DIR}/ "s3://${S3_BUCKET_NAME}/${1}/"  --exclude "releases.json"
 }
 
 function s3_stemcell_upload() {
   echo "Using s3 endpoint: ${S3_ENDPOINT}"
-  aws s3 sync ${DOWNLOAD_STEMCELL_DIR}/ "s3://${S3_BUCKET_NAME}/${1}/"
+  aws s3 sync ${DOWNLOAD_STEMCELL_DIR}/ "s3://${S3_BUCKET_NAME}/${1}/" --exclude "stemcell.versions"
 }
 
 function find_stemcells() {
