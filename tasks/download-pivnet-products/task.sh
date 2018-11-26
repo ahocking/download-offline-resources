@@ -25,7 +25,7 @@ function s3_upload() {
   aws s3 sync ${DOWNLOAD_PRODUCT_DIR}/ "s3://${S3_BUCKET_NAME}/${1}/"
 }
 
-funcation find_stemcells() {
+function find_stemcells() {
   touch $DOWNLOAD_STEMCELL_DIR/stemcell.versions
   pivnet-cli release-dependencies  -p $1 -r $2 --format=json | jq --raw-output '.[]| select (.release.product.slug == "stemcells") | .release.version' | head -1 >> $DOWNLOAD_STEMCELL_DIR/stemcell.versions
 }
