@@ -61,3 +61,116 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
       S3_BUCKET_NAME: {{s3_bucket}}
       S3_ENDPOINT: {{s3_endpoint}}
+
+- name: DOWNLOAD-P-RABBITMQ
+  plan: 
+  - get: offline-resources-repo
+  - task: download-rabbit
+    file: offline-resources-repo/tasks/download-pivnet-products/task.yml
+    params:
+      PRODUCT_SLUG: {{rabbitmq_produt_slug}}
+      TARGET_VERSION: {{rabbitmq_target_version}}
+      REVISIONS: {{revisions}}
+      IAAS_TYPE: {{iaas_type}}
+      API_TOKEN: {{pivnet_token}}
+      AWS_ACCESS_KEY_ID: {{s3_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
+      S3_BUCKET_NAME: {{s3_bucket}}
+      S3_ENDPOINT: {{s3_endpoint}}
+
+- name: DOWNLOAD-SPRING-CLOUD-SERVICES
+  plan: 
+  - get: offline-resources-repo
+  - task: download-scs
+    file: offline-resources-repo/tasks/download-pivnet-products/task.yml
+    params:
+      PRODUCT_SLUG: {{scs_produt_slug}}
+      TARGET_VERSION: {{scs_target_version}}
+      REVISIONS: {{revisions}}
+      IAAS_TYPE: {{iaas_type}}
+      API_TOKEN: {{pivnet_token}}
+      AWS_ACCESS_KEY_ID: {{s3_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
+      S3_BUCKET_NAME: {{s3_bucket}}
+      S3_ENDPOINT: {{s3_endpoint}}
+
+- name: DOWNLOAD-METRICS
+  plan: 
+  - get: offline-resources-repo
+  - task: download-metrics
+    file: offline-resources-repo/tasks/download-pivnet-products/task.yml
+    params:
+      PRODUCT_SLUG: {{metrics_produt_slug}}
+      TARGET_VERSION: {{metrics_target_version}}
+      REVISIONS: {{revisions}}
+      IAAS_TYPE: {{iaas_type}}
+      API_TOKEN: {{pivnet_token}}
+      AWS_ACCESS_KEY_ID: {{s3_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
+      S3_BUCKET_NAME: {{s3_bucket}}
+      S3_ENDPOINT: {{s3_endpoint}}
+
+- name: DOWNLOAD-P-SCHEDULER
+  plan: 
+  - get: offline-resources-repo
+  - task: download-scheduler
+    file: offline-resources-repo/tasks/download-pivnet-products/task.yml
+    params:
+      PRODUCT_SLUG: {{scheduler_produt_slug}}
+      TARGET_VERSION: {{scheduler_target_version}}
+      REVISIONS: {{revisions}}
+      IAAS_TYPE: {{iaas_type}}
+      API_TOKEN: {{pivnet_token}}
+      AWS_ACCESS_KEY_ID: {{s3_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
+      S3_BUCKET_NAME: {{s3_bucket}}
+      S3_ENDPOINT: {{s3_endpoint}}
+
+- name: DOWNLOAD-P-DATAFLOW
+  plan: 
+  - get: offline-resources-repo
+  - task: download-dataflow
+    file: offline-resources-repo/tasks/download-pivnet-products/task.yml
+    params:
+      PRODUCT_SLUG: {{dataflow_produt_slug}}
+      TARGET_VERSION: {{dataflow_target_version}}
+      REVISIONS: {{revisions}}
+      IAAS_TYPE: {{iaas_type}}
+      API_TOKEN: {{pivnet_token}}
+      AWS_ACCESS_KEY_ID: {{s3_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
+      S3_BUCKET_NAME: {{s3_bucket}}
+      S3_ENDPOINT: {{s3_endpoint}}
+
+- name: DOWNLOAD-P-CLOUDCACHE
+  plan: 
+  - get: offline-resources-repo
+  - task: download-cloudcache
+    file: offline-resources-repo/tasks/download-pivnet-products/task.yml
+    params:
+      PRODUCT_SLUG: {{cloudcache_produt_slug}}
+      TARGET_VERSION: {{cloudcache_target_version}}
+      REVISIONS: {{revisions}}
+      IAAS_TYPE: {{iaas_type}}
+      API_TOKEN: {{pivnet_token}}
+      AWS_ACCESS_KEY_ID: {{s3_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
+      S3_BUCKET_NAME: {{s3_bucket}}
+      S3_ENDPOINT: {{s3_endpoint}}
+  
+
+- name: DOWNLOAD-CREDHUB-SERVICE-BROKER
+  plan: 
+  - get: offline-resources-repo
+  - task: download-credhub-service-broker
+    file: offline-resources-repo/tasks/download-pivnet-products/task.yml
+    params:
+      PRODUCT_SLUG: {{credhub-service-broker_produt_slug}}
+      TARGET_VERSION: {{credhub-service-broker_target_version}}
+      REVISIONS: {{revisions}}
+      IAAS_TYPE: {{iaas_type}}
+      API_TOKEN: {{pivnet_token}}
+      AWS_ACCESS_KEY_ID: {{s3_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
+      S3_BUCKET_NAME: {{s3_bucket}}
+      S3_ENDPOINT: {{s3_endpoint}}

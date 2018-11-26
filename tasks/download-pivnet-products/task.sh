@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eux
+set -eu
 
 export CWD=$PWD
 export DOWNLOAD_PRODUCT_DIR="${CWD}/pivnet-products"
