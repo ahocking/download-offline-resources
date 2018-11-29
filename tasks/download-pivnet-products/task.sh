@@ -70,10 +70,23 @@ function main() {
     s3_product_upload $PRODUCT_SLUG
   elif [ $PRODUCT_SLUG = "elastic-runtime" ]; 
   then
+    local glob="cf*.pivotal"
+    if [ $SRT = "true" ]; then glob="srt*.pivotal"
     for ver in "${versions[@]}"; do
       echo $ver
-      download_pivnet_product ${PRODUCT_SLUG} ${ver} "cf*.pivotal"
+      download_pivnet_product ${PRODUCT_SLUG} ${ver} ${glob}
       find_stemcells ${PRODUCT_SLUG} ${ver}
+    done
+    download_pivnet_stemcell
+    s3_product_upload  $PRODUCT_SLUG
+    s3_stemcell_upload "stemcells"
+  elif [ $PRODUCT_SLUG = "p-concourse" ]; 
+  then
+    local glob="*.tgz"
+    if [ $SRT = "true" ]; then glob="srt*.pivotal"
+    for ver in "${versions[@]}"; do
+      echo $ver
+      download_pivnet_product ${PRODUCT_SLUG} ${ver} ${glob}
     done
     download_pivnet_stemcell
     s3_product_upload  $PRODUCT_SLUG
