@@ -87,9 +87,7 @@ function main() {
       echo $ver
       download_pivnet_product ${PRODUCT_SLUG} ${ver} $glob
     done
-    download_pivnet_stemcell
     s3_product_upload  $PRODUCT_SLUG
-    s3_stemcell_upload "stemcells"  
   else
     for ver in "${versions[@]}"; do
       echo $ver
