@@ -68,15 +68,14 @@ function main() {
     done
     echo "upload all opsman to s3"
     s3_product_upload $PRODUCT_SLUG
-  elif [ $PRODUCT_SLUG = "p-concourse" ];
+  elif [ $PRODUCT_SLUG = "p-concourse" ]; 
   then
     local glob="*.tgz"
     for ver in "${versions[@]}"; do
       echo $ver
       download_pivnet_product ${PRODUCT_SLUG} ${ver} ${glob}
     done
-    echo "downloading harbor"
-    s3_product_upload $PRODUCT_SLUG
+    s3_product_upload  $PRODUCT_SLUG
   elif [ $PRODUCT_SLUG = "elastic-runtime" ]; 
   then
     local glob="cf*.pivotal"
