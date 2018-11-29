@@ -45,6 +45,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
       S3_BUCKET_NAME: {{s3_bucket}}
       S3_ENDPOINT: {{s3_endpoint}}
+      SRT: {{small_runtime_ert}}
 
 - name: DOWNLOAD-P-REDIS
   plan: 
@@ -167,6 +168,38 @@ jobs:
     params:
       PRODUCT_SLUG: {{credhub-service-broker_produt_slug}}
       TARGET_VERSION: {{credhub-service-broker_target_version}}
+      REVISIONS: {{revisions}}
+      IAAS_TYPE: {{iaas_type}}
+      API_TOKEN: {{pivnet_token}}
+      AWS_ACCESS_KEY_ID: {{s3_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
+      S3_BUCKET_NAME: {{s3_bucket}}
+      S3_ENDPOINT: {{s3_endpoint}}
+
+- name: DOWNLOAD-HARBOR
+  plan: 
+  - get: offline-resources-repo
+  - task: download-harbor
+    file: offline-resources-repo/tasks/download-pivnet-products/task.yml
+    params:
+      PRODUCT_SLUG: {{harbor_produt_slug}}
+      TARGET_VERSION: {{harbor_target_version}}
+      REVISIONS: {{revisions}}
+      IAAS_TYPE: {{iaas_type}}
+      API_TOKEN: {{pivnet_token}}
+      AWS_ACCESS_KEY_ID: {{s3_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
+      S3_BUCKET_NAME: {{s3_bucket}}
+      S3_ENDPOINT: {{s3_endpoint}}
+
+- name: DOWNLOAD-CONCOURSE
+  plan: 
+  - get: offline-resources-repo
+  - task: download-concourse
+    file: offline-resources-repo/tasks/download-pivnet-products/task.yml
+    params:
+      PRODUCT_SLUG: {{concourse_produt_slug}}
+      TARGET_VERSION: {{concourse_target_version}}
       REVISIONS: {{revisions}}
       IAAS_TYPE: {{iaas_type}}
       API_TOKEN: {{pivnet_token}}
