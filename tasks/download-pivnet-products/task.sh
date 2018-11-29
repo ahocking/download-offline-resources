@@ -60,19 +60,19 @@ function main() {
   local versions=($(head -${REVISIONS} ${DOWNLOAD_PRODUCT_DIR}/releases.json))
 
   #loop through all the releases and download the product
-  if [ $PRODUCT_SLUG = "ops-manager" ]; then
+  if [ $PRODUCT_SLUG = "ops-manager" ]; 
+  then
     for ver in "${versions[@]}"; do
       echo $ver
       download_pivnet_product ${PRODUCT_SLUG} ${ver} ${IAAS_TYPE}
     done
     echo "upload all opsman to s3"
     s3_product_upload $PRODUCT_SLUG
-  elif [ $PRODUCT_SLUG = "elastic-runtime" ]; then
-    local glob="cf*.pivotal"
-    if [ $SRT = "true" ]; then glob="srt*.pivotal"
+  elif [ $PRODUCT_SLUG = "elastic-runtime" ]; 
+  then
     for ver in "${versions[@]}"; do
       echo $ver
-      download_pivnet_product ${PRODUCT_SLUG} ${ver} ${glob}
+      download_pivnet_product ${PRODUCT_SLUG} ${ver} "cf*.pivotal"
       find_stemcells ${PRODUCT_SLUG} ${ver}
     done
     download_pivnet_stemcell
