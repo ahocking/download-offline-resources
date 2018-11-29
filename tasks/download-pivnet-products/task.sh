@@ -68,8 +68,7 @@ function main() {
     done
     echo "upload all opsman to s3"
     s3_product_upload $PRODUCT_SLUG
-  elif [ $PRODUCT_SLUG = "elastic-runtime" ]; 
-  then
+  elif [ $PRODUCT_SLUG = "elastic-runtime" ]; then
     local glob="cf*.pivotal"
     if [ $SRT = "true" ]; then glob="srt*.pivotal"
     for ver in "${versions[@]}"; do
