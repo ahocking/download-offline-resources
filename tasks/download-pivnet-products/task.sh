@@ -74,7 +74,7 @@ function main() {
     if [ $SRT = "true" ]; then glob="srt*.pivotal"
     for ver in "${versions[@]}"; do
       echo $ver
-      download_pivnet_product ${PRODUCT_SLUG} ${ver} ${glob}
+      download_pivnet_product ${PRODUCT_SLUG} ${ver} $glob
       find_stemcells ${PRODUCT_SLUG} ${ver}
     done
     download_pivnet_stemcell
@@ -86,7 +86,7 @@ function main() {
     if [ $SRT = "true" ]; then glob="srt*.pivotal"
     for ver in "${versions[@]}"; do
       echo $ver
-      download_pivnet_product ${PRODUCT_SLUG} ${ver} ${glob}
+      download_pivnet_product ${PRODUCT_SLUG} ${ver} $glob
     done
     download_pivnet_stemcell
     s3_product_upload  $PRODUCT_SLUG
