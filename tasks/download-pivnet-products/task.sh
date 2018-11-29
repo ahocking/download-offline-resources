@@ -71,7 +71,7 @@ function main() {
   elif [ $PRODUCT_SLUG = "elastic-runtime" ]; 
   then
     local glob="cf*.pivotal"
-    if [ $SRT = "true" ]; then glob="srt*.pivotal"
+    if [ $SRT = "true" ]; then glob="srt*.pivotal" fi
     for ver in "${versions[@]}"; do
       echo $ver
       download_pivnet_product ${PRODUCT_SLUG} ${ver} $glob
@@ -83,7 +83,6 @@ function main() {
   elif [ $PRODUCT_SLUG = "p-concourse" ]; 
   then
     local glob="*.tgz"
-    if [ $SRT = "true" ]; then glob="srt*.pivotal"
     for ver in "${versions[@]}"; do
       echo $ver
       download_pivnet_product ${PRODUCT_SLUG} ${ver} $glob
