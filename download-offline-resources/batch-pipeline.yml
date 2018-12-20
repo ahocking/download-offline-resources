@@ -6,6 +6,20 @@ resource_types:
     tag: latest-final
 
 resources:
+
+- name: pcfnorm-rootfs
+  type: docker-image
+  source:
+    repository: pcfnorm/rootfs
+
+- name: pcfnorm-rootfs-s3
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_bucket))
+    secret_access_key: ((s3_secret_access_key))
+    regexp: image-resource/pcfnorm-(.*).tgz
+
 #git resource for the Pipelines
 - name: offline-resources-repo
   type: git
@@ -14,6 +28,52 @@ resources:
     branch: mling
 
 jobs:
+- name: DOWNLOAD-DOCKER-IMAGE
+  plan: 
+  - get: pcfnorm-rootfs
+    params:
+      rootfs: true
+  - get: pcfnorm-rootfs-s3
+    params:
+      unpack: true
+  - task: perpare-image-to-export
+    image: pcfnorm-rootfs-s3
+    config: 
+      platform: linux
+      inputs: 
+        - name: pcfnorm-rootfs
+      outputs:
+        - name: rootfs
+    #   image_resource:
+    #     type: docker-image
+    #     source: 
+    #       repository: pcfnorm/rootfs
+      run:
+        path: bash
+        args:
+        # - -exc
+        # - |
+        #   echo "Exporting docker image"
+        #   mkdir export-directory && cd export-directory
+        #   cp ../pcfnorm-rootfs/metadata.json .
+        #   mkdir rootfs
+        #   tar -xf ../pcfnorm-rootfs/rootfs.tar -C ./rootfs/ --exclude="dev/*"
+        #   cd rootfs
+        #   cd ../..
+        #   echo "Packaging ubuntu image"
+        #   tmp_version="17.04"
+        #   tar -czf "rootfs/pcfnorm-rootfs-${tmp_version}.tgz" -C export-directory .
+        #   ls -la rootfs
+        - -c
+        - |
+          set -eu
+          version=$(cat pcfnorm-rootfs/metadata.json | jq --raw-output '.Release.Version')
+          echo "Creating tarball with version ${version}..."
+          tar czf "rootfs/pcfnorm-rootfs-${version}.tgz" -C pcfnorm-rootfs .
+  - put: pcfnorm-rootfs-s3
+    params:
+      file: "rootfs/pcfnorm-rootfs-*.tgz"
+
 - name: DOWNLOAD-OPSMAN
   plan: 
   - get: offline-resources-repo
@@ -200,6 +260,22 @@ jobs:
     params:
       PRODUCT_SLUG: {{concourse_produt_slug}}
       TARGET_VERSION: {{concourse_target_version}}
+      REVISIONS: {{revisions}}
+      IAAS_TYPE: {{iaas_type}}
+      API_TOKEN: {{pivnet_token}}
+      AWS_ACCESS_KEY_ID: {{s3_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
+      S3_BUCKET_NAME: {{s3_bucket}}
+      S3_ENDPOINT: {{s3_endpoint}}
+
+- name: DOWNLOAD-HEALTHWATCH
+  plan: 
+  - get: offline-resources-repo
+  - task: download-healthwatch
+    file: offline-resources-repo/tasks/download-pivnet-products/task.yml
+    params:
+      PRODUCT_SLUG: {{healthwatch_produt_slug}}
+      TARGET_VERSION: {{healthwatch_target_version}}
       REVISIONS: {{revisions}}
       IAAS_TYPE: {{iaas_type}}
       API_TOKEN: {{pivnet_token}}
