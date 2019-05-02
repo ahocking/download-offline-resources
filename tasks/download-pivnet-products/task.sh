@@ -17,25 +17,27 @@ function download_pivnet_stemcell() {
   mkdir $DOWNLOAD_STEMCELL_DIR/xenial
 
   #downloads the stemcells associated with the pivnet product
+  echo "download trusty stemcells"
   local versions=($( uniq $DOWNLOAD_STEMCELL_DIR/trusty.stemcell.versions))
-  for ver in "${versions[@]}"; do
-    echo "downloading stemcell: " $ver
-    if [ -n "$ver" ]; then
+  if [ -z "$versions" ]; then
+    echo "nothing to download for trusty"
+  else
+    for ver in "${versions[@]}"; do
+      echo "downloading stemcell: " $ver
       pivnet-cli dlpf -p "stemcells" -r ${ver} -g *${IAAS_TYPE}* -d $DOWNLOAD_STEMCELL_DIR/trusty --accept-eula
-    else
-      echo "nothing to download for trusty"
-    fi
-  done
+    done
+  fi
 
+  echo "download xenial stemcells"
   local versions=($( uniq $DOWNLOAD_STEMCELL_DIR/xenial.stemcell.versions))
-  for ver in "${versions[@]}"; do
-    echo "downloading stemcell: " $ver
-    if [ -n "$ver" ]; then
+  if [ -z "$versions" ]; then
+    echo "nothing to download for xenial"
+  else
+    for ver in "${versions[@]}"; do
+      echo "downloading stemcell: " $ver
       pivnet-cli dlpf -p "stemcells-ubuntu-xenial" -r ${ver} -g *${IAAS_TYPE}* -d $DOWNLOAD_STEMCELL_DIR/xenial --accept-eula
-    else
-      echo "nothing to download for xenial"
-    fi
-  done
+    done
+  fi
 }
 
 function download_pivnet_product() {
