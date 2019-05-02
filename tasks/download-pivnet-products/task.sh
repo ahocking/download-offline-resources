@@ -31,7 +31,7 @@ function download_pivnet_stemcell() {
   for ver in "${versions[@]}"; do
     echo "downloading stemcell: " $ver
     if [ -n "$ver" ]; then
-      pivnet-cli dlpf -p "stemcells" -r ${ver} -g *${IAAS_TYPE}* -d $DOWNLOAD_STEMCELL_DIR/xenial --accept-eula
+      pivnet-cli dlpf -p "stemcells-ubuntu-xenial" -r ${ver} -g *${IAAS_TYPE}* -d $DOWNLOAD_STEMCELL_DIR/xenial --accept-eula
     else
       echo "nothing to download for xenial"
     fi
