@@ -12,6 +12,10 @@ function abort() {
 }
 
 function download_pivnet_stemcell() {
+  #create directories for local download
+  mkdir $DOWNLOAD_STEMCELL_DIR/trusty
+  mkdir $DOWNLOAD_STEMCELL_DIR/xenial
+
   #downloads the stemcells associated with the pivnet product
   local versions=($( uniq $DOWNLOAD_STEMCELL_DIR/trusty.stemcell.versions))
   for ver in "${versions[@]}"; do
