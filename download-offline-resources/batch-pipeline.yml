@@ -29,9 +29,10 @@ resources:
 
 jobs:
 - name: DOWNLOAD-DOCKER-IMAGE
-  serial: true
+  serial_groups: [single_line]
   plan: 
   - get: pcfnorm-rootfs
+    trigger: true
     params:
       rootfs: true
   - get: pcfnorm-rootfs-s3
@@ -59,9 +60,10 @@ jobs:
       file: "rootfs/pcfnorm-rootfs-*.tgz"
 
 - name: DOWNLOAD-OPSMAN
-  serial: true
+  serial_groups: [single_line]
   plan: 
   - get: offline-resources-repo
+    trigger: true
   - task: download-opsman
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
@@ -76,9 +78,10 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-ERT
-  serial: true
+  serial_groups: [single_line]
   plan: 
   - get: offline-resources-repo
+    trigger: true  
   - task: download-ert
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
@@ -94,9 +97,10 @@ jobs:
       SRT: {{small_runtime_ert}}
 
 - name: DOWNLOAD-P-REDIS
-  serial: true
+  serial_groups: [single_line]
   plan: 
   - get: offline-resources-repo
+    trigger: true  
   - task: download-redis
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
@@ -111,9 +115,10 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-P-RABBITMQ
-  serial: true
+  serial_groups: [single_line]
   plan: 
   - get: offline-resources-repo
+    trigger: true  
   - task: download-rabbit
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
@@ -127,10 +132,47 @@ jobs:
       S3_BUCKET_NAME: {{s3_bucket}}
       S3_ENDPOINT: {{s3_endpoint}}
 
-- name: DOWNLOAD-SPRING-CLOUD-SERVICES
-  serial: true
+- name: DOWNLOAD-P-MYSQL
+  serial_groups: [single_line]
   plan: 
   - get: offline-resources-repo
+    trigger: true  
+  - task: download-rabbit
+    file: offline-resources-repo/tasks/download-pivnet-products/task.yml
+    params:
+      PRODUCT_SLUG: {{mysql_produt_slug}}
+      TARGET_VERSION: {{mysql_target_version}}
+      REVISIONS: {{revisions}}
+      IAAS_TYPE: {{iaas_type}}
+      API_TOKEN: {{pivnet_token}}
+      AWS_ACCESS_KEY_ID: {{s3_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
+      S3_BUCKET_NAME: {{s3_bucket}}
+      S3_ENDPOINT: {{s3_endpoint}}
+
+- name: DOWNLOAD-P-SSO
+  serial_groups: [single_line]
+  plan: 
+  - get: offline-resources-repo
+    trigger: true  
+  - task: download-rabbit
+    file: offline-resources-repo/tasks/download-pivnet-products/task.yml
+    params:
+      PRODUCT_SLUG: {{sso_produt_slug}}
+      TARGET_VERSION: {{sso_target_version}}
+      REVISIONS: {{revisions}}
+      IAAS_TYPE: {{iaas_type}}
+      API_TOKEN: {{pivnet_token}}
+      AWS_ACCESS_KEY_ID: {{s3_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
+      S3_BUCKET_NAME: {{s3_bucket}}
+      S3_ENDPOINT: {{s3_endpoint}}
+
+- name: DOWNLOAD-SPRING-CLOUD-SERVICES
+  serial_groups: [single_line]
+  plan: 
+  - get: offline-resources-repo
+    trigger: true  
   - task: download-scs
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
@@ -145,9 +187,10 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-METRICS
-  serial: true
+  serial_groups: [single_line]
   plan: 
   - get: offline-resources-repo
+    trigger: true  
   - task: download-metrics
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
@@ -162,9 +205,10 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-P-SCHEDULER
-  serial: true
+  serial_groups: [single_line]
   plan: 
   - get: offline-resources-repo
+    trigger: true  
   - task: download-scheduler
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
@@ -179,9 +223,10 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-P-DATAFLOW
-  serial: true
+  serial_groups: [single_line]
   plan: 
   - get: offline-resources-repo
+    trigger: true  
   - task: download-dataflow
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
@@ -196,9 +241,10 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-P-CLOUDCACHE
-  serial: true
+  serial_groups: [single_line]
   plan: 
   - get: offline-resources-repo
+    trigger: true  
   - task: download-cloudcache
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
@@ -214,9 +260,10 @@ jobs:
   
 
 - name: DOWNLOAD-CREDHUB-SERVICE-BROKER
-  serial: true
+  serial_groups: [single_line]
   plan: 
   - get: offline-resources-repo
+    trigger: true  
   - task: download-credhub-service-broker
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
@@ -231,9 +278,10 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-HARBOR
-  serial: true
+  serial_groups: [single_line]
   plan: 
   - get: offline-resources-repo
+    trigger: true  
   - task: download-harbor
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
@@ -248,9 +296,10 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-CONCOURSE
-  serial: true
+  serial_groups: [single_line]
   plan: 
   - get: offline-resources-repo
+    trigger: true  
   - task: download-concourse
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
@@ -265,9 +314,10 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-HEALTHWATCH
-  serial: true
+  serial_groups: [single_line]
   plan: 
   - get: offline-resources-repo
+    trigger: true  
   - task: download-healthwatch
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:

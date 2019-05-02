@@ -13,10 +13,16 @@ function abort() {
 
 function download_pivnet_stemcell() {
   #downloads the stemcells associated with the pivnet product
-  local versions=($( uniq $DOWNLOAD_STEMCELL_DIR/stemcell.versions))
+  local versions=($( uniq $DOWNLOAD_STEMCELL_DIR/trusty.stemcell.versions))
   for ver in "${versions[@]}"; do
     echo "downloading stemcell: " $ver
-    pivnet-cli dlpf -p "stemcells" -r ${ver} -g *${IAAS_TYPE}* -d $DOWNLOAD_STEMCELL_DIR --accept-eula
+    pivnet-cli dlpf -p "stemcells" -r ${ver} -g *${IAAS_TYPE}* -d $DOWNLOAD_STEMCELL_DIR/trusty --accept-eula
+  done
+
+  local versions=($( uniq $DOWNLOAD_STEMCELL_DIR/xenial.stemcell.versions))
+  for ver in "${versions[@]}"; do
+    echo "downloading stemcell: " $ver
+    pivnet-cli dlpf -p "stemcells" -r ${ver} -g *${IAAS_TYPE}* -d $DOWNLOAD_STEMCELL_DIR/xenial --accept-eula
   done
 }
 
@@ -36,8 +42,13 @@ function s3_stemcell_upload() {
 }
 
 function find_stemcells() {
-  touch $DOWNLOAD_STEMCELL_DIR/stemcell.versions
-  pivnet-cli release-dependencies  -p $1 -r $2 --format=json | jq --raw-output '.[]| select (.release.product.slug == "stemcells") | .release.version' | head -1 >> $DOWNLOAD_STEMCELL_DIR/stemcell.versions
+  touch $DOWNLOAD_STEMCELL_DIR/trusty.stemcell.versions
+  touch $DOWNLOAD_STEMCELL_DIR/xenial.stemcell.versions
+  #find stemcells for trusty
+  pivnet-cli release-dependencies  -p $1 -r $2 --format=json | jq --raw-output '.[]| select (.release.product.slug == "stemcells") | .release.version' | head -1 >> $DOWNLOAD_STEMCELL_DIR/trusty.stemcell.versions
+
+  #find stemcells for xenial
+  pivnet-cli release-dependencies  -p $1 -r $2 --format=json | jq --raw-output '.[]| select (.release.product.slug == "stemcells-ubuntu-xenial") | .release.version' | head -1 >> $DOWNLOAD_STEMCELL_DIR/xenial.stemcell.versions  
 }
 
 function main() {
