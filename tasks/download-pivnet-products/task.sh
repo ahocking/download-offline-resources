@@ -19,7 +19,7 @@ function download_pivnet_stemcell() {
   #downloads the stemcells associated with the pivnet product
   echo "download trusty stemcells"
   local versions=($( uniq $DOWNLOAD_STEMCELL_DIR/trusty.stemcell.versions))
-  if [ -z "$versions" ]; then
+  if [[ !${versions[@]} ]]; then
     echo "nothing to download for trusty"
   else
     for ver in "${versions[@]}"; do
@@ -30,7 +30,7 @@ function download_pivnet_stemcell() {
 
   echo "download xenial stemcells"
   local versions=($( uniq $DOWNLOAD_STEMCELL_DIR/xenial.stemcell.versions))
-  if [ -z "$versions" ]; then
+  if [[ !${versions[@]} ]]; then
     echo "nothing to download for xenial"
   else
     for ver in "${versions[@]}"; do
