@@ -12,7 +12,7 @@ function abort() {
 }
 
 function download_pivnet_stemcell() {
-  #   #downloads the stemcells associated with the pivnet product
+  #downloads the stemcells associated with the pivnet product
   local versions=($( uniq $DOWNLOAD_STEMCELL_DIR/stemcell.versions))
   for ver in "${versions[@]}"; do
     echo "downloading stemcell: " $ver
@@ -54,7 +54,7 @@ function main() {
   pivnet-cli login --api-token="$API_TOKEN"
   pivnet-cli eula --eula-slug=pivotal_software_eula >/dev/null 
 
-  pivnet-cli releases -p $PRODUCT_SLUG --format=json | jq --raw-output --arg v "$TARGET_VERSION" '.[] | select (.version <= $v) | .version' > $DOWNLOAD_PRODUCT_DIR/releases.json
+  pivnet-cli releases -p $PRODUCT_SLUG --format=json | jq --raw-output --arg v "$TARGET_VERSION" '.[] | select (.version <= $v and (.version|contains("-")| not) ) | .version' > $DOWNLOAD_PRODUCT_DIR/releases.json
 
 
   local versions=($(head -${REVISIONS} ${DOWNLOAD_PRODUCT_DIR}/releases.json))

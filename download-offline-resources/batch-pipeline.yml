@@ -29,6 +29,7 @@ resources:
 
 jobs:
 - name: DOWNLOAD-DOCKER-IMAGE
+  serial: true
   plan: 
   - get: pcfnorm-rootfs
     params:
@@ -44,26 +45,9 @@ jobs:
         - name: pcfnorm-rootfs
       outputs:
         - name: rootfs
-    #   image_resource:
-    #     type: docker-image
-    #     source: 
-    #       repository: pcfnorm/rootfs
       run:
         path: bash
         args:
-        # - -exc
-        # - |
-        #   echo "Exporting docker image"
-        #   mkdir export-directory && cd export-directory
-        #   cp ../pcfnorm-rootfs/metadata.json .
-        #   mkdir rootfs
-        #   tar -xf ../pcfnorm-rootfs/rootfs.tar -C ./rootfs/ --exclude="dev/*"
-        #   cd rootfs
-        #   cd ../..
-        #   echo "Packaging ubuntu image"
-        #   tmp_version="17.04"
-        #   tar -czf "rootfs/pcfnorm-rootfs-${tmp_version}.tgz" -C export-directory .
-        #   ls -la rootfs
         - -c
         - |
           set -eu
@@ -75,6 +59,7 @@ jobs:
       file: "rootfs/pcfnorm-rootfs-*.tgz"
 
 - name: DOWNLOAD-OPSMAN
+  serial: true
   plan: 
   - get: offline-resources-repo
   - task: download-opsman
@@ -91,6 +76,7 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-ERT
+  serial: true
   plan: 
   - get: offline-resources-repo
   - task: download-ert
@@ -108,6 +94,7 @@ jobs:
       SRT: {{small_runtime_ert}}
 
 - name: DOWNLOAD-P-REDIS
+  serial: true
   plan: 
   - get: offline-resources-repo
   - task: download-redis
@@ -124,6 +111,7 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-P-RABBITMQ
+  serial: true
   plan: 
   - get: offline-resources-repo
   - task: download-rabbit
@@ -140,6 +128,7 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-SPRING-CLOUD-SERVICES
+  serial: true
   plan: 
   - get: offline-resources-repo
   - task: download-scs
@@ -156,6 +145,7 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-METRICS
+  serial: true
   plan: 
   - get: offline-resources-repo
   - task: download-metrics
@@ -172,6 +162,7 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-P-SCHEDULER
+  serial: true
   plan: 
   - get: offline-resources-repo
   - task: download-scheduler
@@ -188,6 +179,7 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-P-DATAFLOW
+  serial: true
   plan: 
   - get: offline-resources-repo
   - task: download-dataflow
@@ -204,6 +196,7 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-P-CLOUDCACHE
+  serial: true
   plan: 
   - get: offline-resources-repo
   - task: download-cloudcache
@@ -221,6 +214,7 @@ jobs:
   
 
 - name: DOWNLOAD-CREDHUB-SERVICE-BROKER
+  serial: true
   plan: 
   - get: offline-resources-repo
   - task: download-credhub-service-broker
@@ -237,6 +231,7 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-HARBOR
+  serial: true
   plan: 
   - get: offline-resources-repo
   - task: download-harbor
@@ -253,6 +248,7 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-CONCOURSE
+  serial: true
   plan: 
   - get: offline-resources-repo
   - task: download-concourse
@@ -269,6 +265,7 @@ jobs:
       S3_ENDPOINT: {{s3_endpoint}}
 
 - name: DOWNLOAD-HEALTHWATCH
+  serial: true
   plan: 
   - get: offline-resources-repo
   - task: download-healthwatch
