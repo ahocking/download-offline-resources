@@ -137,11 +137,29 @@ jobs:
   plan: 
   - get: offline-resources-repo
     trigger: true  
-  - task: download-rabbit
+  - task: download-p-mysql
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
       PRODUCT_SLUG: {{mysql_produt_slug}}
       TARGET_VERSION: {{mysql_target_version}}
+      REVISIONS: {{revisions}}
+      IAAS_TYPE: {{iaas_type}}
+      API_TOKEN: {{pivnet_token}}
+      AWS_ACCESS_KEY_ID: {{s3_access_key_id}}
+      AWS_SECRET_ACCESS_KEY: {{s3_secret_access_key}}
+      S3_BUCKET_NAME: {{s3_bucket}}
+      S3_ENDPOINT: {{s3_endpoint}}
+
+- name: DOWNLOAD-CRUNCHY-POSTGRESQL
+  serial_groups: [single_line]
+  plan: 
+  - get: offline-resources-repo
+    trigger: true  
+  - task: download-crunchy-postgreSQL
+    file: offline-resources-repo/tasks/download-pivnet-products/task.yml
+    params:
+      PRODUCT_SLUG: {{crunchy_produt_slug}}
+      TARGET_VERSION: {{crunchy_target_version}}
       REVISIONS: {{revisions}}
       IAAS_TYPE: {{iaas_type}}
       API_TOKEN: {{pivnet_token}}
@@ -155,7 +173,7 @@ jobs:
   plan: 
   - get: offline-resources-repo
     trigger: true  
-  - task: download-rabbit
+  - task: download-p-sso
     file: offline-resources-repo/tasks/download-pivnet-products/task.yml
     params:
       PRODUCT_SLUG: {{sso_produt_slug}}
